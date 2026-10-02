@@ -1,0 +1,6 @@
+# Dữ liệu thật / file kết quả không đưa lên repo (repo public)
+*.xlsx
+*.xls
+*.pkl
+excel/output/
+__pycache__/
