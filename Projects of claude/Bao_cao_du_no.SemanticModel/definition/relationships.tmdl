@@ -1,0 +1,84 @@
+relationship AutoDetected_a757e99a-1cb0-4ca5-b117-af5212696df4
+	fromColumn: tblHopDong.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_dca943f4-1d16-4987-aeed-839b0434d48a
+	fromColumn: tblKheUoc.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_7ad96b92-5ff5-4b95-831f-28b09d6ae3dc
+	fromColumn: tblLichDaiHan.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_5498ec15-2525-4d5f-a9b0-d56a25c7535f
+	fromColumn: tblHopDong.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_d2338181-56c4-4ce5-b4f0-1e117a20d421
+	fromColumn: tblKheUoc.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_bb504c10-5e00-4995-b253-b3b75afd038a
+	fromColumn: tblLichDaiHan.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_8b6579d3-f2c8-4aca-b0ec-2421810b5216
+	isActive: false
+	fromColumn: q_LichTraNo.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_cfc4b85a-64d1-4bb4-b597-b970bc535f0c
+	isActive: false
+	fromColumn: q_LichTraNo.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_060e43fb-94b4-4006-bd95-091799a82f19
+	fromColumn: q_LichTraNo.MaKheUoc
+	toColumn: tblKheUoc.MaKheUoc
+
+relationship AutoDetected_0bc3a3e0-45b1-4e2a-9e5f-c9a28fd4db1a
+	fromColumn: q_SaoKeLPBank.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_4548b0d4-c073-43f8-ad42-ea5ff0f211ff
+	fromColumn: q_SaoKeLPBank.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_726ecd9f-e846-4cd4-bfa0-2091d7f2127c
+	fromColumn: q_SaoKeNABank.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_372738db-29cf-4127-b515-2af3499d7bfd
+	fromColumn: q_SaoKeVPBank.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_88d56c18-b14a-46f5-bbf7-d3e2482ccee3
+	fromColumn: q_SaoKeHDBank.MaCongTy
+	toColumn: tblCongTy.MaCongTy
+
+relationship AutoDetected_75419f70-d4c5-42ee-8dfa-ff1b245cbb5d
+	fromColumn: q_SaoKeNABank.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_1c78b8c5-9624-407d-b6e9-4ea22aa910d6
+	fromColumn: q_SaoKeVPBank.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_47dd9462-6f60-4e8a-99a6-021fd4adf7ef
+	fromColumn: q_SaoKeHDBank.MaNganHang
+	toColumn: tblNganHang.MaNganHang
+
+relationship AutoDetected_dc66ce50-a753-410c-89b2-170e81b90ebd
+	isActive: false
+	fromColumn: q_SaoKeNABank.MaKheUoc
+	toColumn: tblKheUoc.MaKheUoc
+
+relationship AutoDetected_02536251-2097-4345-bae7-b79cd1125fc7
+	isActive: false
+	fromColumn: q_SaoKeHDBank.MaKheUoc
+	toColumn: tblKheUoc.MaKheUoc
+
+relationship AutoDetected_5163000c-3fa2-4cb4-ba50-674a4ce336c8
+	fromColumn: q_TraNo.MaKheUoc
+	toColumn: tblKheUoc.MaKheUoc
+

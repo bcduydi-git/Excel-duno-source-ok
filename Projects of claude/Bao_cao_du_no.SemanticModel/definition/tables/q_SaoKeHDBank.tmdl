@@ -1,0 +1,466 @@
+table q_SaoKeHDBank
+	isHidden
+	lineageTag: 70ee30db-c107-4f57-804d-e4be5c11888c
+
+	column DongNguon
+		dataType: int64
+		formatString: 0
+		lineageTag: b53ebfdc-fc94-4e71-a316-3dde10658f85
+		summarizeBy: sum
+		sourceColumn: DongNguon
+
+		annotation SummarizationSetBy = Automatic
+
+	column STT
+		dataType: int64
+		formatString: 0
+		lineageTag: ab817d66-f516-4db4-8821-79b24725cb21
+		summarizeBy: sum
+		sourceColumn: STT
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayGiaoDich
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1874b6b7-da1f-42f9-a01d-7615e33463ee
+		summarizeBy: none
+		sourceColumn: NgayGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column NgayGiaTri
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: be71d6db-0f7b-4a98-86a7-dfc97ec58e6b
+		summarizeBy: none
+		sourceColumn: NgayGiaTri
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column NoiDung
+		dataType: string
+		lineageTag: b9c2778e-9893-4237-bda0-db0d1fa90eeb
+		summarizeBy: none
+		sourceColumn: NoiDung
+
+		annotation SummarizationSetBy = Automatic
+
+	column GhiNo
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 72868142-d0c2-4c3c-8da1-48344c85188b
+		summarizeBy: sum
+		sourceColumn: GhiNo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column GhiCo
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 0c59f025-9932-4322-a31e-4115d6e93267
+		summarizeBy: sum
+		sourceColumn: GhiCo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column SoDuTaiKhoan
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: a18ad5c3-bb30-4a99-be41-cebf884b506b
+		summarizeBy: sum
+		sourceColumn: SoDuTaiKhoan
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column TenFileNguon
+		dataType: string
+		lineageTag: c827ba11-8aa5-4877-8b48-d41ebc190da5
+		summarizeBy: none
+		sourceColumn: TenFileNguon
+
+		annotation SummarizationSetBy = Automatic
+
+	column IDGiaoDich
+		dataType: string
+		lineageTag: c595c044-30cb-488a-81b0-d18df7273b3a
+		summarizeBy: none
+		sourceColumn: IDGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+	column SoGiaoDich
+		dataType: string
+		lineageTag: 8ff46e6e-b75b-49a4-8ca3-31cae91d5ec3
+		summarizeBy: none
+		sourceColumn: SoGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaCongTy
+		dataType: string
+		lineageTag: 936fde61-344f-4caa-818b-e4da0e35f499
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column NganHangSaoKe
+		dataType: string
+		lineageTag: 3e20f2b6-a243-4fa3-87e1-ea6ed70b5366
+		summarizeBy: none
+		sourceColumn: NganHangSaoKe
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaKheUoc
+		dataType: string
+		lineageTag: 72677e65-f347-4180-a0a8-495a93066f0d
+		summarizeBy: none
+		sourceColumn: MaKheUoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column PhanLoai
+		dataType: string
+		lineageTag: 35a6599a-9d70-450d-87d4-8261e94e54ae
+		summarizeBy: none
+		sourceColumn: PhanLoai
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaNganHang
+		dataType: string
+		lineageTag: 6177319e-e92f-4102-9f40-a993347c34c1
+		summarizeBy: none
+		sourceColumn: MaNganHang
+
+		annotation SummarizationSetBy = Automatic
+
+	column GocDaTra
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 304b9d81-ada6-4aaa-aac3-0b939c827fb1
+		summarizeBy: sum
+		sourceColumn: GocDaTra
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column LaiPhiDaTra
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 02837040-2164-4aa2-88d5-a1e7b36d3c23
+		summarizeBy: sum
+		sourceColumn: LaiPhiDaTra
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	partition q_SaoKeHDBank = m
+		mode: import
+		source =
+				let
+				    ThuMuc = "C:\DuNo\SaoKe\HP\HDBank",
+				
+				    Chu = (x as any) as text =>
+				        if x = null then "" else Text.Trim(Text.From(x)),
+				
+				    SoTien = (x as any) as number =>
+				        let
+				            S = Text.Replace(
+				                Text.Replace(Chu(x), " ", ""),
+				                Character.FromNumber(160), ""
+				            )
+				        in
+				            if S = "" then 0
+				            else if x is number then x
+				            else if Text.Contains(S, ",") then
+				                Number.FromText(S, "en-US")
+				            else if Text.Contains(S, ".") then
+				                Number.FromText(S, "vi-VN")
+				            else
+				                Number.FromText(S, "en-US"),
+				
+				    Ngay = (x as any) as nullable date =>
+				        if Chu(x) = "" then null
+				        else if x is text then
+				            Date.FromText(Chu(x), [Culture = "vi-VN"])
+				        else Date.From(x),
+				
+				    DocFile = (NoiDungFile as binary, TenFile as text) as table =>
+				        let
+				            Workbook = Excel.Workbook(NoiDungFile, null, true),
+				
+				            CacBang = List.Select(
+				                Table.ToRecords(Workbook),
+				                each Value.Is(
+				                    Record.FieldOrDefault(_, "Data", null),
+				                    type table
+				                )
+				            ),
+				
+				            BangPhuHop = List.Select(
+				                CacBang,
+				                (R) =>
+				                    List.AnyTrue(
+				                        List.Transform(
+				                            Table.ToRows(
+				                                Table.FirstN(Record.Field(R, "Data"), 40)
+				                            ),
+				                            (Dong) =>
+				                                let
+				                                    TieuDe = List.Transform(
+				                                        Dong,
+				                                        each Text.Upper(
+				                                            Text.Trim(
+				                                                Text.Replace(
+				                                                    Text.Replace(Chu(_), "#(cr)", " "),
+				                                                    "#(lf)", " "
+				                                                )
+				                                            )
+				                                        )
+				                                    )
+				                                in
+				                                    List.Contains(TieuDe, "STT")
+				                                    and List.Contains(TieuDe, "SỐ TIỀN RÚT")
+				                                    and List.Contains(TieuDe, "SỐ TIỀN GỬI")
+				                        )
+				                    )
+				            ),
+				
+				            Sheet =
+				                if List.Count(BangPhuHop) = 1 then
+				                    Record.Field(BangPhuHop{0}, "Data")
+				                else
+				                    error "Không xác định được duy nhất một bảng sao kê HDBank có các cột STT, Số tiền rút, Số tiền gửi.",
+				
+				            DanhSoDong = Table.AddIndexColumn(
+				                Sheet, "DongNguon", 1, 1, Int64.Type
+				            ),
+				
+				            LocGiaoDich = Table.SelectRows(
+				                DanhSoDong,
+				                each
+				                    let STT = Chu([Column1])
+				                    in
+				                        STT <> ""
+				                        and Text.Select(STT, {"0".."9"}) = STT
+				            ),
+				
+				            ChonCot = Table.SelectColumns(
+				                LocGiaoDich,
+				                {
+				                    "DongNguon", "Column1", "Column2",
+				                    "Column3", "Column4", "Column5",
+				                    "Column6", "Column7"
+				                }
+				            ),
+				
+				            DoiTen = Table.RenameColumns(
+				                ChonCot,
+				                {
+				                    {"Column1", "STT"},
+				                    {"Column2", "NgayGiaoDich"},
+				                    {"Column3", "NgayGiaTri"},
+				                    {"Column4", "NoiDung"},
+				                    {"Column5", "GhiNo"},
+				                    {"Column6", "GhiCo"},
+				                    {"Column7", "SoDuTaiKhoan"}
+				                }
+				            ),
+				
+				            ChuanHoa = Table.TransformColumns(
+				                DoiTen,
+				                {
+				                    {"STT", each Int64.From(_), Int64.Type},
+				                    {"NgayGiaoDich", Ngay, type date},
+				                    {"NgayGiaTri", Ngay, type date},
+				                    {"NoiDung", Chu, type text},
+				                    {"GhiNo", SoTien, Currency.Type},
+				                    {"GhiCo", SoTien, Currency.Type},
+				                    {"SoDuTaiKhoan", SoTien, Currency.Type}
+				                }
+				            ),
+				
+				            ThemTenFile = Table.AddColumn(
+				                ChuanHoa, "TenFileNguon",
+				                each TenFile, type text
+				            ),
+				
+				            ThemID = Table.AddColumn(
+				                ThemTenFile,
+				                "IDGiaoDich",
+				                each
+				                    "HP|HDBank|" & TenFile
+				                    & "|" & Text.From([DongNguon]),
+				                type text
+				            ),
+				
+				            ThemSoGiaoDich = Table.AddColumn(
+				                ThemID,
+				                "SoGiaoDich",
+				                each null,
+				                type nullable text
+				            )
+				        in
+				            ThemSoGiaoDich,
+				
+				    DanhSachFile = Folder.Files(ThuMuc),
+				
+				    LocFile = Table.SelectRows(
+				        DanhSachFile,
+				        each
+				            List.Contains(
+				                {".xls", ".xlsx"}, Text.Lower([Extension])
+				            )
+				            and not Text.StartsWith([Name], "~$")
+				            and [Attributes]?[Hidden]? <> true
+				    ),
+				
+				    DocCacFile = Table.AddColumn(
+				        LocFile,
+				        "DuLieu",
+				        each DocFile([Content], [Name])
+				    ),
+				
+				    GopFile =
+				        if Table.IsEmpty(LocFile) then
+				            error "Folder HDBank chưa có file sao kê."
+				        else
+				            Table.Combine(DocCacFile[DuLieu]),
+				
+				    ThemCongTy = Table.AddColumn(
+				        GopFile, "MaCongTy", each "HP", type text
+				    ),
+				
+				    ThemNganHangSaoKe = Table.AddColumn(
+				        ThemCongTy,
+				        "NganHangSaoKe",
+				        each "HDBank",
+				        type text
+				    ),
+				
+				    // Dò mã đang có trong danh mục, không cố định số hợp đồng.
+				    DanhMucMa = List.Buffer(
+				        List.Distinct(
+				            List.Select(
+				                Table.SelectRows(
+				                    tblKheUoc,
+				                    each [MaCongTy] = "HP"
+				                        and [MaNganHang] = "HDBank"
+				                )[MaKheUoc],
+				                each _ <> null and Chu(_) <> ""
+				            )
+				        )
+				    ),
+				
+				    ChuanMa = (x as text) as text =>
+				        Text.Replace(Text.Upper(Chu(x)), "Đ", "D"),
+				
+				    ThemMaKheUoc = Table.AddColumn(
+				        ThemNganHangSaoKe,
+				        "MaKheUoc",
+				        each
+				            let
+				                ND = ChuanMa([NoiDung]),
+				                DoDaiND = Text.Length(ND),
+				
+				                // Dòng liệt kê nhiều DD không gán hết tiền
+				                // vào mã khế ước đầu tiên trong nội dung.
+				                NhieuKhoan =
+				                    Text.Contains(ND, "_DD:")
+				                    or Text.Contains(ND, "_DD: "),
+				
+				                MaKhop = List.Select(
+				                    DanhMucMa,
+				                    (Ma) =>
+				                        let
+				                            M = ChuanMa(Ma),
+				                            ViTri = Text.PositionOf(ND, M),
+				                            ViTriSau = ViTri + Text.Length(M),
+				                            SauMa =
+				                                if ViTri < 0 or ViTriSau >= DoDaiND then ""
+				                                else Text.Range(ND, ViTriSau, 1)
+				                        in
+				                            ViTri >= 0
+				                            and not List.Contains(
+				                                {"0".."9"}, SauMa
+				                            )
+				                )
+				            in
+				                if NhieuKhoan then null
+				                else if List.Count(MaKhop) = 1 then MaKhop{0}
+				                else null,
+				        type nullable text
+				    ),
+				
+				    ThemPhanLoai = Table.AddColumn(
+				        ThemMaKheUoc,
+				        "PhanLoai",
+				        each
+				            let
+				                ND = ChuanMa([NoiDung]),
+				                LienQuanVay =
+				                    Text.Contains(ND, "TIN DUNG")
+				                    or Text.Contains(ND, "THU NO")
+				                    or Text.Contains(ND, "THU NỢ")
+				                    or Text.Contains(ND, "KUNN")
+				                    or [MaKheUoc] <> null
+				            in
+				                if [GhiNo] <= 0 then "KHAC"
+				                else if LienQuanVay then "CHO_AI"
+				                else "KHAC",
+				        type text
+				    ),
+				
+				    ThemNganHangVay = Table.AddColumn(
+				        ThemPhanLoai,
+				        "MaNganHang",
+				        each
+				            if [PhanLoai] = "CHO_AI" then "HDBank"
+				            else null,
+				        type nullable text
+				    ),
+				
+				    ThemGoc = Table.AddColumn(
+				        ThemNganHangVay,
+				        "GocDaTra",
+				        each null,
+				        Currency.Type
+				    ),
+				
+				    ThemLaiPhi = Table.AddColumn(
+				        ThemGoc,
+				        "LaiPhiDaTra",
+				        each null,
+				        Currency.Type
+				    ),
+				
+				    KetQua = Table.Sort(
+				        ThemLaiPhi,
+				        {
+				            {"NgayGiaoDich", Order.Ascending},
+				            {"TenFileNguon", Order.Ascending},
+				            {"DongNguon", Order.Ascending}
+				        }
+				    )
+				in
+				    KetQua
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

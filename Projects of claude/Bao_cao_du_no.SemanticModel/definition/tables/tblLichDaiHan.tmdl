@@ -1,0 +1,149 @@
+table tblLichDaiHan
+	lineageTag: 92b7efd4-5967-451c-8ea3-4b035ff81039
+
+	column MaCongTy
+		dataType: string
+		lineageTag: e121ad25-4253-4a9b-99b5-e10e6c19f19b
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaNganHang
+		dataType: string
+		lineageTag: c5f11d96-225e-4828-b6ad-804dafcaafb8
+		summarizeBy: none
+		sourceColumn: MaNganHang
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaKheUoc
+		dataType: string
+		lineageTag: aada01dd-dbef-4ee2-bf3e-09db1fba3dec
+		summarizeBy: none
+		sourceColumn: MaKheUoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column KyTraNo
+		dataType: int64
+		formatString: 0
+		lineageTag: 050f69b4-9b2c-4b6b-88ee-392c272be309
+		summarizeBy: sum
+		sourceColumn: KyTraNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayDenHan
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: d4f46729-a95f-4d42-8bba-f3a0477977e3
+		summarizeBy: none
+		sourceColumn: NgayDenHan
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DuNoTheoLichDauKy
+		dataType: int64
+		formatString: #,0
+		lineageTag: b29cacbc-6d79-4597-8558-397dc9d1f88d
+		summarizeBy: sum
+		sourceColumn: DuNoTheoLichDauKy
+
+		annotation SummarizationSetBy = Automatic
+
+	column GocPhaiTra
+		dataType: int64
+		formatString: #,0
+		lineageTag: 2a615c94-aa60-4526-b014-7a6297ca5549
+		summarizeBy: sum
+		sourceColumn: GocPhaiTra
+
+		annotation SummarizationSetBy = Automatic
+
+	column TongPhaiTra
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0b3ac334-61af-4898-b1b1-5f3fe5cb6fcf
+		summarizeBy: sum
+		sourceColumn: TongPhaiTra
+
+		annotation SummarizationSetBy = Automatic
+
+	column GhiChu
+		dataType: string
+		lineageTag: 9d008bfa-520c-42f0-8cfe-d5c9a8a9e028
+		summarizeBy: none
+		sourceColumn: GhiChu
+
+		annotation SummarizationSetBy = Automatic
+
+	column LaiPhiDuKien
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4b4a6877-f8e4-484d-829b-d968836efb14
+		summarizeBy: sum
+		sourceColumn: LaiPhiDuKien
+
+		annotation SummarizationSetBy = Automatic
+
+	partition tblLichDaiHan = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\DuNo\Du_lieu_dau_vao_du_no.xlsx"), null, true),
+				
+				    DuLieu = Source{[Item="tblLichDaiHan", Kind="Table"]}[Data],
+				
+				    ChuanHoaMa = Table.TransformColumns(
+				        DuLieu,
+				        List.Transform(
+				            {"MaCongTy", "MaNganHang", "MaKheUoc"},
+				            (Cot) => {
+				                Cot,
+				                each
+				                    if _ = null then null
+				                    else
+				                        let
+				                            Chu = Text.Trim(Text.From(_))
+				                        in
+				                            if Chu = "" then null else Chu,
+				                type nullable text
+				            }
+				        )
+				    ),
+				
+				    DinhDangDuLieu = Table.TransformColumnTypes(
+				        ChuanHoaMa,
+				        {
+				            {"MaCongTy", type text},
+				            {"MaNganHang", type text},
+				            {"MaKheUoc", type text},
+				            {"KyTraNo", Int64.Type},
+				            {"NgayDenHan", type date},
+				            {"DuNoTheoLichDauKy", Int64.Type},
+				            {"GocPhaiTra", Int64.Type},
+				            {"TongPhaiTra", Int64.Type},
+				            {"GhiChu", type text}
+				        },
+				        "vi-VN"
+				    ),
+				
+				    ThemLaiPhiDuKien = Table.AddColumn(
+				        DinhDangDuLieu,
+				        "LaiPhiDuKien",
+				        each
+				            if [TongPhaiTra] = null or [GocPhaiTra] = null
+				            then null
+				            else [TongPhaiTra] - [GocPhaiTra],
+				        Int64.Type
+				    )
+				in
+				    ThemLaiPhiDuKien
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

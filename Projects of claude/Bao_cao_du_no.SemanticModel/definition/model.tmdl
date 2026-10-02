@@ -1,0 +1,30 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: vi-VN
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["tblCongTy","tblNganHang","tblHopDong","tblKheUoc","tblLichDaiHan","q_LichTraNo","q_SaoKeLPBank","q_SaoKeNABank","q_SaoKeVPBank","q_SaoKeHDBank","q_TraNo"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table tblCongTy
+ref table tblNganHang
+ref table tblHopDong
+ref table tblKheUoc
+ref table tblLichDaiHan
+ref table q_LichTraNo
+ref table q_SaoKeLPBank
+ref table NgayBaoCao
+ref table q_SaoKeNABank
+ref table q_SaoKeVPBank
+ref table q_SaoKeHDBank
+ref table q_TraNo
+
+ref cultureInfo en-US
+

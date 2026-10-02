@@ -1,0 +1,288 @@
+table q_TraNo
+	lineageTag: 769a3f5f-c6c2-44e0-8c6e-826b4dd4eb9f
+
+	measure GocDaTraTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    IF(
+			        ISEMPTY(tblKheUoc),
+			        BLANK(),
+			        COALESCE(
+			            CALCULATE(
+			                SUM(q_TraNo[GocDaTra]),
+			                q_TraNo[NgayGiaoDich] >= TuNgay,
+			                q_TraNo[NgayGiaoDich] < DenNgay + 1
+			            ),
+			            0
+			        )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 87402013-33f8-4b96-ad0f-5437b931a3dc
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure LaiPhiDaTraTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    IF(
+			        ISEMPTY(tblKheUoc),
+			        BLANK(),
+			        COALESCE(
+			            CALCULATE(
+			                SUM(q_TraNo[LaiPhiDaTra]),
+			                q_TraNo[NgayGiaoDich] >= TuNgay,
+			                q_TraNo[NgayGiaoDich] < DenNgay + 1
+			            ),
+			            0
+			        )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 01fddb5b-2470-4fdd-99e2-c615c3b663b7
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure TongDaTraTrongKy =
+			
+			[GocDaTraTrongKy] + [LaiPhiDaTraTrongKy]
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 3d551602-a8b6-44aa-b777-448b2c406dc0
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure SoDongTraNoTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        COUNTROWS(q_TraNo),
+			        KEEPFILTERS(q_TraNo[NgayGiaoDich] >= TuNgay),
+			        KEEPFILTERS(q_TraNo[NgayGiaoDich] < DenNgay + 1)
+			    )
+		formatString: 0
+		lineageTag: a34ac88d-6d8a-4326-b61e-b804168d5c77
+
+	measure LaiPhiDaTraTrongKyTyDong =
+			
+			[LaiPhiDaTraTrongKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 0d1e2f3a-4b5c-4d6e-f7a8-9b0c1d2e3f46
+
+	/// Giao dịch trả nợ (chủ yếu lấy tự động từ sao kê) có mã khế ước không tồn tại trong tblKheUoc — không được trừ vào dư nợ nào.
+	measure SoGiaoDichKhongKhopKheUoc =
+			
+			CALCULATE(
+			    COUNTROWS(q_TraNo),
+			    ISBLANK(tblKheUoc[MaKheUoc])
+			)
+		formatString: 0
+		lineageTag: 1e2f3a4b-5c6d-4e7f-a8b9-0c1d2e3f4a57
+
+	measure GocDaTraKhongKhopKheUoc =
+			
+			CALCULATE(
+			    SUM(q_TraNo[GocDaTra]),
+			    ISBLANK(tblKheUoc[MaKheUoc])
+			)
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 2f3a4b5c-6d7e-4f8a-b9c0-1d2e3f4a5b68
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column IDGiaoDich
+		dataType: string
+		lineageTag: e952909b-84f8-4d23-8328-415135f2c076
+		summarizeBy: none
+		sourceColumn: IDGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaCongTy
+		dataType: string
+		lineageTag: 96d8c0fe-3258-4f50-bcf4-616b91f951e3
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column NganHangSaoKe
+		dataType: string
+		lineageTag: 48c0f09f-882b-4ff9-bb61-61f72c26b4de
+		summarizeBy: none
+		sourceColumn: NganHangSaoKe
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaNganHang
+		dataType: string
+		lineageTag: 3170bec5-9467-4cd4-9e6d-adc1efced376
+		summarizeBy: none
+		sourceColumn: MaNganHang
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaKheUoc
+		dataType: string
+		lineageTag: 0c912a8e-7bd9-4287-8fe9-1245a7b869b3
+		summarizeBy: none
+		sourceColumn: MaKheUoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayGiaoDich
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 509b235c-95a9-4321-a279-180a1e412480
+		summarizeBy: none
+		sourceColumn: NgayGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column GocDaTra
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 589c0285-a0ec-43c9-923a-23ecd165ab15
+		summarizeBy: sum
+		sourceColumn: GocDaTra
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column LaiPhiDaTra
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 3ab8cfe2-a785-4404-9813-1cba0a4e34b7
+		summarizeBy: sum
+		sourceColumn: LaiPhiDaTra
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column PhanLoai
+		dataType: string
+		lineageTag: 35300457-925e-4576-98de-63e66f0fe402
+		summarizeBy: none
+		sourceColumn: PhanLoai
+
+		annotation SummarizationSetBy = Automatic
+
+	column NoiDung
+		dataType: string
+		lineageTag: 0acf9a02-c57d-4f9a-9109-a8ee43d7cbb2
+		summarizeBy: none
+		sourceColumn: NoiDung
+
+		annotation SummarizationSetBy = Automatic
+
+	column SoGiaoDich
+		dataType: string
+		lineageTag: 2e6fd8fb-2de2-4f45-bf72-2304a938af16
+		summarizeBy: none
+		sourceColumn: SoGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+	column TenFileNguon
+		dataType: string
+		lineageTag: a53d1c2a-bc32-4bb4-967e-e1068f057809
+		summarizeBy: none
+		sourceColumn: TenFileNguon
+
+		annotation SummarizationSetBy = Automatic
+
+	column DongNguon
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b072891-69ee-4928-a3dd-1544ff4fec02
+		summarizeBy: sum
+		sourceColumn: DongNguon
+
+		annotation SummarizationSetBy = Automatic
+
+	partition q_TraNo = m
+		mode: import
+		source =
+				let
+				    DuongDanFile = "C:\DuNo\Du_lieu_dau_vao_du_no.xlsx",
+				    Chu = (x as any) as text => if x = null then "" else Text.Trim(Text.From(x)),
+				    Excel = Excel.Workbook(File.Contents(DuongDanFile), null, true),
+				    BangNhap = Excel{[Item = "tblTraNoNhapTay", Kind = "Table"]}[Data],
+				    ChonCot = Table.SelectColumns(BangNhap,
+				        {"NgayGiaoDich", "MaKheUoc", "GocDaTra", "LaiPhiDaTra", "GhiChu"}),
+				    SoDong = Table.AddIndexColumn(ChonCot, "DongNguon", 6, 1, Int64.Type),
+				    BoDongTrong = Table.SelectRows(SoDong, each
+				        List.AnyTrue(List.Transform(
+				            {[NgayGiaoDich], [MaKheUoc], [GocDaTra], [LaiPhiDaTra], [GhiChu]},
+				            (x) => Chu(x) <> ""))),
+				    ChuanChu = Table.TransformColumns(BoDongTrong,
+				        {{"MaKheUoc", Chu, type text}, {"GhiChu", Chu, type text}}),
+				    ThieuThongTin = Table.SelectRows(ChuanChu, each
+				        [MaKheUoc] = "" or Chu([NgayGiaoDich]) = ""
+				        or (Chu([GocDaTra]) = "" and Chu([LaiPhiDaTra]) = "")),
+				    KiemTraNhap = if Table.IsEmpty(ThieuThongTin) then ChuanChu
+				        else error Error.Record("ThieuThongTinTraNo",
+				            "Điền ngày giao dịch, mã khế ước và số tiền tại TRA_NO_NHAP_TAY.",
+				            [DongExcel = ThieuThongTin[DongNguon]]),
+				    So = (x as any) as number => if Chu(x) = "" then 0
+				        else if x is number then x else Number.FromText(Chu(x), "vi-VN"),
+				    DinhDang = Table.TransformColumns(KiemTraNhap, {
+				        {"NgayGiaoDich", each Date.From(_, "vi-VN"), type date},
+				        {"GocDaTra", So, Currency.Type}, {"LaiPhiDaTra", So, Currency.Type}
+				    }),
+				    DanhMuc = Table.Distinct(
+				    Table.Combine({
+				        Table.SelectColumns(
+				            tblKheUoc,
+				            {"MaKheUoc", "MaCongTy", "MaNganHang"}
+				        ),
+				        Table.SelectColumns(
+				            tblLichDaiHan,
+				            {"MaKheUoc", "MaCongTy", "MaNganHang"}
+				        )
+				    })
+				),
+				    Ghep = Table.NestedJoin(DinhDang, {"MaKheUoc"}, DanhMuc, {"MaKheUoc"}, "KU", JoinKind.LeftOuter),
+				    SaiMa = Table.SelectRows(Ghep, each Table.RowCount([KU]) <> 1),
+				    KiemTraMa = if Table.IsEmpty(SaiMa) then Ghep else
+				        error Error.Record("MaKheUocKhongHopLe",
+				            "Mã khế ước phải có đúng một dòng trong tblKheUoc.",
+				            [DongExcel = SaiMa[DongNguon], MaKheUoc = SaiMa[MaKheUoc]]),
+				    MoRong = Table.ExpandTableColumn(KiemTraMa, "KU", {"MaCongTy", "MaNganHang"}),
+				    ThemLoai = Table.AddColumn(MoRong, "PhanLoai", each "NHAP_TAY", type text),
+				    DoiTen = Table.RenameColumns(ThemLoai, {{"GhiChu", "NoiDung"}}),
+				    ThemID = Table.AddColumn(DoiTen, "IDGiaoDich",
+				        each "NHAP_TAY|" & Text.From([DongNguon]), type text),
+				    ThemFile = Table.AddColumn(ThemID, "TenFileNguon", each "tblTraNoNhapTay", type text),
+				
+				    // Chỉ hai nguồn này còn tự động lấy giao dịch rõ gốc/lãi.
+				    TuDong = Table.SelectRows(Table.Combine({q_SaoKeVPBank, q_SaoKeNABank}),
+				        each List.Contains({"GOC", "LAI_PHI"}, [PhanLoai]) and [MaKheUoc] <> null),
+				    CacCot = {"IDGiaoDich", "MaCongTy", "NganHangSaoKe", "MaNganHang", "MaKheUoc",
+				        "NgayGiaoDich", "GocDaTra", "LaiPhiDaTra", "PhanLoai", "NoiDung",
+				        "SoGiaoDich", "TenFileNguon", "DongNguon"},
+				    Gop = Table.Combine({
+				        Table.SelectColumns(TuDong, CacCot, MissingField.UseNull),
+				        Table.SelectColumns(ThemFile, CacCot, MissingField.UseNull)
+				    }),
+				    KieuDuLieu = Table.TransformColumnTypes(Gop, {
+				        {"IDGiaoDich", type text}, {"MaCongTy", type text}, {"NganHangSaoKe", type text},
+				        {"MaNganHang", type text}, {"MaKheUoc", type text}, {"NgayGiaoDich", type date},
+				        {"GocDaTra", Currency.Type}, {"LaiPhiDaTra", Currency.Type},
+				        {"PhanLoai", type text}, {"NoiDung", type text}, {"SoGiaoDich", type text},
+				        {"TenFileNguon", type text}, {"DongNguon", Int64.Type}
+				    }, "vi-VN")
+				in
+				    Table.Sort(KieuDuLieu, {{"NgayGiaoDich", Order.Ascending}, {"MaKheUoc", Order.Ascending}})
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

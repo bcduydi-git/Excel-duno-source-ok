@@ -1,0 +1,30 @@
+table NgayBaoCao
+	lineageTag: 19a12f10-f082-403e-89c0-5f55fd3e58a3
+
+	column Date
+		formatString: dd/mm/yyyy
+		lineageTag: d31e1163-fbb2-4b02-aa4c-e5ea752af2ab
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition NgayBaoCao = calculated
+		mode: import
+		source =
+				
+				VAR TuNgay =
+				    MINX(tblKheUoc, tblKheUoc[NgayNhanNo])
+				VAR DenNgay =
+				    MAX(
+				        TODAY(),
+				        MAXX(tblKheUoc, tblKheUoc[NgayDaoHan])
+				    )
+				RETURN
+				    CALENDAR(TuNgay, DenNgay)
+
+	annotation PBI_Id = d7d6008ffd1d45f2b141e74aa2df331b
+

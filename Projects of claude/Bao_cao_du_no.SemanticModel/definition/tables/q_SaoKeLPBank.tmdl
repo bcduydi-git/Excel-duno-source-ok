@@ -1,0 +1,420 @@
+table q_SaoKeLPBank
+	isHidden
+	lineageTag: 47049d77-d483-45ad-83fb-ce03b8aa6a0a
+
+	column DongNguon
+		dataType: int64
+		formatString: 0
+		lineageTag: 07a394df-6e37-4909-8517-1a48e1539011
+		summarizeBy: sum
+		sourceColumn: DongNguon
+
+		annotation SummarizationSetBy = Automatic
+
+	column STT
+		dataType: int64
+		formatString: 0
+		lineageTag: 01388f8e-c7fd-4c40-abb2-2aaa57b5285c
+		summarizeBy: sum
+		sourceColumn: STT
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayGiaoDich
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1af6c20f-77c9-4a1d-8df5-e488984fb2f0
+		summarizeBy: none
+		sourceColumn: NgayGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column NoiDung
+		dataType: string
+		lineageTag: 7e2019fd-37ea-4fcf-9e9e-9d82490e3acb
+		summarizeBy: none
+		sourceColumn: NoiDung
+
+		annotation SummarizationSetBy = Automatic
+
+	column SoGiaoDich
+		dataType: string
+		lineageTag: 2157f9d3-8b6d-4e61-a036-0e4ba1a83336
+		summarizeBy: none
+		sourceColumn: SoGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+	column GhiNo
+		dataType: double
+		lineageTag: 2d2b6988-c730-4202-9224-46fb86a0ec76
+		summarizeBy: sum
+		sourceColumn: GhiNo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GhiCo
+		dataType: double
+		lineageTag: 06b72ddc-0b8a-4ded-9593-d07dc8930d0e
+		summarizeBy: sum
+		sourceColumn: GhiCo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SoDuTaiKhoan
+		dataType: double
+		lineageTag: bec4b7fd-5f85-4a67-88d0-a730b62be6c3
+		summarizeBy: sum
+		sourceColumn: SoDuTaiKhoan
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TaiKhoanDoiUng
+		dataType: string
+		lineageTag: ffba850c-9bb7-41e3-9f17-0fe7055caf30
+		summarizeBy: none
+		sourceColumn: TaiKhoanDoiUng
+
+		annotation SummarizationSetBy = Automatic
+
+	column TenDoiUng
+		dataType: string
+		lineageTag: 48dd2f06-8af7-4a10-b3f9-25d1caf9a37a
+		summarizeBy: none
+		sourceColumn: TenDoiUng
+
+		annotation SummarizationSetBy = Automatic
+
+	column NganHangDoiUng
+		dataType: string
+		lineageTag: 32dba5d1-288b-45b2-b453-9e14c7dd33d8
+		summarizeBy: none
+		sourceColumn: NganHangDoiUng
+
+		annotation SummarizationSetBy = Automatic
+
+	column TenFileNguon
+		dataType: string
+		lineageTag: 79d212f3-a409-4ca3-be7a-647beaa3ecab
+		summarizeBy: none
+		sourceColumn: TenFileNguon
+
+		annotation SummarizationSetBy = Automatic
+
+	column IDGiaoDich
+		dataType: string
+		lineageTag: 692995d6-4180-41bf-9a79-0820e3815db8
+		summarizeBy: none
+		sourceColumn: IDGiaoDich
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaCongTy
+		dataType: string
+		lineageTag: bc31046b-b2e8-4e97-b334-2a588cf0cd1a
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column NganHangSaoKe
+		dataType: string
+		lineageTag: 4f91c9e6-b66c-49ca-ab80-4820ffffa17f
+		summarizeBy: none
+		sourceColumn: NganHangSaoKe
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaKheUoc
+		dataType: string
+		lineageTag: 21a45737-96f5-4a62-98df-9ae1ec8aa775
+		summarizeBy: none
+		sourceColumn: MaKheUoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column PhanLoai
+		dataType: string
+		lineageTag: f2684048-aff4-4449-90fd-ee035b9e60b8
+		summarizeBy: none
+		sourceColumn: PhanLoai
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaNganHang
+		dataType: string
+		lineageTag: eb948772-dbe1-4e81-baa7-c7d9fbf81d14
+		summarizeBy: none
+		sourceColumn: MaNganHang
+
+		annotation SummarizationSetBy = Automatic
+
+	column GocDaTra
+		dataType: double
+		lineageTag: 8df61ae9-61ab-45ae-9bf2-b3df1a662f06
+		summarizeBy: sum
+		sourceColumn: GocDaTra
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LaiPhiDaTra
+		dataType: double
+		lineageTag: a2b61f24-f529-44e3-8a0a-4695c0005d11
+		summarizeBy: sum
+		sourceColumn: LaiPhiDaTra
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition q_SaoKeLPBank = m
+		mode: import
+		source =
+				let
+				    ThuMuc =
+				        "C:\DuNo\SaoKe\HP\LPBank",
+				
+				    Chu = (x as any) as text =>
+				        if x = null then "" else Text.Trim(Text.From(x)),
+				
+				    SoTien = (x as any) as number =>
+				        if x = null or Chu(x) = "" then 0
+				        else if x is number then x
+				        else Number.FromText(Chu(x), "en-US"),
+				
+				    DocFile = (
+				        NoiDungFile as binary,
+				        TenFile as text,
+				        DuongDan as text
+				    ) as table =>
+				        let
+				            Workbook = Excel.Workbook(NoiDungFile, null, true),
+				
+				            Sheet = Workbook{
+				                [Item = "Lịch sử giao dịch", Kind = "Sheet"]
+				            }[Data],
+				
+				            // Giữ số dòng Excel để truy vết
+				            DanhSoDong = Table.AddIndexColumn(
+				                Sheet, "DongNguon", 1, 1, Int64.Type
+				            ),
+				
+				            // Dòng giao dịch có STT bằng số
+				            LocGiaoDich = Table.SelectRows(
+				                DanhSoDong,
+				                each
+				                    let
+				                        STT = Chu([Column1])
+				                    in
+				                        STT <> ""
+				                        and Text.Select(STT, {"0".."9"}) = STT
+				            ),
+				
+				            ChonCot = Table.SelectColumns(
+				                LocGiaoDich,
+				                {
+				                    "DongNguon",
+				                    "Column1",
+				                    "Column2",
+				                    "Column3",
+				                    "Column6",
+				                    "Column7",
+				                    "Column8",
+				                    "Column9",
+				                    "Column13",
+				                    "Column14",
+				                    "Column16"
+				                }
+				            ),
+				
+				            DoiTen = Table.RenameColumns(
+				                ChonCot,
+				                {
+				                    {"Column1", "STT"},
+				                    {"Column2", "NgayGiaoDich"},
+				                    {"Column3", "NoiDung"},
+				                    {"Column6", "SoGiaoDich"},
+				                    {"Column7", "GhiNo"},
+				                    {"Column8", "GhiCo"},
+				                    {"Column9", "SoDuTaiKhoan"},
+				                    {"Column13", "TaiKhoanDoiUng"},
+				                    {"Column14", "TenDoiUng"},
+				                    {"Column16", "NganHangDoiUng"}
+				                }
+				            ),
+				
+				            ChuanHoa = Table.TransformColumns(
+				                DoiTen,
+				                {
+				                    {"STT", each Int64.From(_), Int64.Type},
+				                    {
+				                        "NgayGiaoDich",
+				                        each
+				                            if _ is text then
+				                                Date.From(
+				                                    DateTime.FromText(
+				                                        Text.Trim(_),
+				                                        [Culture = "vi-VN"]
+				                                    )
+				                                )
+				                            else Date.From(_),
+				                        type date
+				                    },
+				                    {"NoiDung", Chu, type text},
+				                    {"SoGiaoDich", Chu, type text},
+				                    {"GhiNo", SoTien, type number},
+				                    {"GhiCo", SoTien, type number},
+				                    {"SoDuTaiKhoan", SoTien, type number},
+				                    {"TaiKhoanDoiUng", Chu, type text},
+				                    {"TenDoiUng", Chu, type text},
+				                    {"NganHangDoiUng", Chu, type text}
+				                }
+				            ),
+				
+				            ThemTenFile = Table.AddColumn(
+				                ChuanHoa, "TenFileNguon", each TenFile, type text
+				            ),
+				
+				            ThemID = Table.AddColumn(
+				            ThemTenFile,
+				            "IDGiaoDich",
+				            each
+				                "HP|LPBank|"
+				                & TenFile
+				                & "|"
+				                & Text.From([DongNguon], "en-US"),
+				            type text
+				        )
+				        in
+				            ThemID,
+				
+				    DanhSachFile = Folder.Files(ThuMuc),
+				
+				    LocFile = Table.SelectRows(
+				        DanhSachFile,
+				        each
+				            Text.Lower([Extension]) = ".xlsx"
+				            and not Text.StartsWith([Name], "~$")
+				            and [Attributes]?[Hidden]? <> true
+				    ),
+				
+				    DocCacFile = Table.AddColumn(
+				        LocFile,
+				        "DuLieu",
+				        each DocFile([Content], [Name], [Folder Path])
+				    ),
+				
+				    GopFile =
+				        if Table.IsEmpty(LocFile) then
+				            error "Folder chưa có file sao kê .xlsx."
+				        else
+				            Table.Combine(DocCacFile[DuLieu]),
+				
+				    ThemCongTy = Table.AddColumn(
+				        GopFile, "MaCongTy", each "HP", type text
+				    ),
+				
+				    ThemNganHangSaoKe = Table.AddColumn(
+				        ThemCongTy, "NganHangSaoKe", each "LPBank", type text
+				    ),
+				
+				    // LD2600918367 hoặc PDLD2600918367;8
+				    ThemMaKheUoc = Table.AddColumn(
+				        ThemNganHangSaoKe,
+				        "MaKheUoc",
+				        each
+				            let
+				                Ref = Text.Upper([SoGiaoDich]),
+				                BoHauTo = Text.BeforeDelimiter(Ref & ";", ";"),
+				                Ma =
+				                    if Text.StartsWith(BoHauTo, "PDLD") then
+				                        Text.Range(BoHauTo, 2)
+				                    else BoHauTo
+				            in
+				                if Text.StartsWith(Ma, "LD")
+				                    and Text.Length(Ma) = 12
+				                    and Text.Select(
+				                        Text.Range(Ma, 2), {"0".."9"}
+				                    ) = Text.Range(Ma, 2)
+				                then Ma
+				                else null,
+				        type nullable text
+				    ),
+				
+				    ThemPhanLoai = Table.AddColumn(
+				        ThemMaKheUoc,
+				        "PhanLoai",
+				        each
+				            let
+				                ND = Text.Upper([NoiDung]),
+				                CoMa = [MaKheUoc] <> null
+				            in
+				                if [GhiNo] <= 0 then "KHAC"
+				                else if Text.StartsWith(ND, "THU GOC KHE UOC")
+				                    and CoMa then "GOC"
+				                else if Text.StartsWith(ND, "THU LAI KHE UOC")
+				                    and CoMa then "LAI_PHI"
+				                else if
+				                    Text.Contains(ND, "CHUYEN NO QUA HAN")
+				                    or Text.Contains(ND, "GOC VA LAI")
+				                    or Text.Contains(ND, "THU GOC")
+				                    or Text.Contains(ND, "THU LAI")
+				                    or CoMa
+				                then "CHO_AI"
+				                else "KHAC",
+				        type text
+				    ),
+				
+				    // Ngân hàng cho vay khác với ngân hàng xuất sao kê
+				    ThemNganHangVay = Table.AddColumn(
+				        ThemPhanLoai,
+				        "MaNganHang",
+				        each if [MaKheUoc] <> null then "LPBank" else null,
+				        type nullable text
+				    ),
+				
+				    ThemGoc = Table.AddColumn(
+				        ThemNganHangVay,
+				        "GocDaTra",
+				        each
+				            if [PhanLoai] = "GOC" then [GhiNo]
+				            else if [PhanLoai] = "LAI_PHI" then 0
+				            else null,
+				        type nullable number
+				    ),
+				
+				    ThemLaiPhi = Table.AddColumn(
+				        ThemGoc,
+				        "LaiPhiDaTra",
+				        each
+				            if [PhanLoai] = "LAI_PHI" then [GhiNo]
+				            else if [PhanLoai] = "GOC" then 0
+				            else null,
+				        type nullable number
+				    ),
+				
+				    KetQua = Table.Sort(
+				        ThemLaiPhi,
+				        {
+				            {"NgayGiaoDich", Order.Ascending},
+				            {"TenFileNguon", Order.Ascending},
+				            {"DongNguon", Order.Ascending}
+				        }
+				    )
+				in
+				    KetQua
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,178 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 669.253915953758,
+            "y": 386.90094414474436
+          },
+          "nodeIndex": "tblCongTy",
+          "nodeLineageTag": "f76c7d94-b22f-4d80-a207-44041011dd6e",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 450.178395411951,
+            "y": 565.95913652341324
+          },
+          "nodeIndex": "tblHopDong",
+          "nodeLineageTag": "06b0b90d-9b30-448b-baf7-e42e2dda1001",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 152.12054524552059
+          },
+          "nodeIndex": "tblKheUoc",
+          "nodeLineageTag": "751a6148-13bd-4963-9ea4-2be09f9f8aba",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 669.3011738422116,
+            "y": 38.495875343577836
+          },
+          "nodeIndex": "tblLichDaiHan",
+          "nodeLineageTag": "92b7efd4-5967-451c-8ea3-4b035ff81039",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 164.21830564989011,
+            "y": 504.89549903251441
+          },
+          "nodeIndex": "tblNganHang",
+          "nodeLineageTag": "c0d51647-e9d3-4074-bfe7-85a8f79f6e6e",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 903.3011738422116,
+            "y": 350.22750593349554
+          },
+          "nodeIndex": "q_LichTraNo",
+          "nodeLineageTag": "02838121-6808-4733-8bd3-afe534e705cd",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1137.3011738422115,
+            "y": 350.22750593349554
+          },
+          "nodeIndex": "q_SaoKeLPBank",
+          "nodeLineageTag": "47049d77-d483-45ad-83fb-ce03b8aa6a0a",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1635.3011738422115,
+            "y": 413.22750593349554
+          },
+          "nodeIndex": "NgayBaoCao",
+          "nodeLineageTag": "19a12f10-f082-403e-89c0-5f55fd3e58a3",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2197.8217533410575,
+            "y": -50
+          },
+          "nodeIndex": "q_SaoKeHDBank",
+          "nodeLineageTag": "70ee30db-c107-4f57-804d-e4be5c11888c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2562.5279130021318,
+            "y": 436.23625081489956
+          },
+          "nodeIndex": "q_SaoKeNABank",
+          "nodeLineageTag": "bb9045e8-eeb3-4b22-b76f-a8f7d6bf998e",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1919.3011738422115,
+            "y": 300.21240322248332
+          },
+          "nodeIndex": "q_SaoKeVPBank",
+          "nodeLineageTag": "80eb49ba-b8b3-4b47-b311-187a341ac857",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2556.97572120258,
+            "y": 85.970039644431836
+          },
+          "nodeIndex": "q_TraNo",
+          "nodeLineageTag": "769a3f5f-c6c2-44e0-8c6e-826b4dd4eb9f",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

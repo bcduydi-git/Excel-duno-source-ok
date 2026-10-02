@@ -1,0 +1,33 @@
+table tblCongTy
+	lineageTag: f76c7d94-b22f-4d80-a207-44041011dd6e
+
+	column MaCongTy
+		dataType: string
+		lineageTag: 22a2b041-7b35-4b1a-8656-44c52cbe303a
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column TenCongTy
+		dataType: string
+		lineageTag: 52244309-9cc2-438d-a513-ec14f604e32d
+		summarizeBy: none
+		sourceColumn: TenCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	partition tblCongTy = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\DuNo\Du_lieu_dau_vao_du_no.xlsx"), null, true),
+				    tblCongTy_Table = Source{[Item="tblCongTy",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(tblCongTy_Table,{{"MaCongTy", type text}, {"TenCongTy", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

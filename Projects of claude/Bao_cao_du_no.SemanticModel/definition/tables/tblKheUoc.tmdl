@@ -1,0 +1,942 @@
+table tblKheUoc
+	lineageTag: 751a6148-13bd-4963-9ea4-2be09f9f8aba
+
+	measure DuNoDauKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			RETURN
+			    SUMX(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR NgayNhan =
+			            CALCULATE(MAX(tblKheUoc[NgayNhanNo]))
+			        VAR TienVay =
+			            CALCULATE(SUM(tblKheUoc[SoTienVay]))
+			        VAR MocTheoDoi =
+			            CALCULATE(MAX(tblKheUoc[NgayBatDauTheoDoi]))
+			        VAR DuNoGoc =
+			            CALCULATE(SUM(tblKheUoc[DuNoBanDau]))
+			        VAR CoSoDuDau =
+			            NOT ISBLANK(MocTheoDoi)
+			        VAR GocDaTra =
+			            IF(
+			                CoSoDuDau,
+			                CALCULATE(
+			                    SUM(q_TraNo[GocDaTra]),
+			                    q_TraNo[NgayGiaoDich] >= MocTheoDoi,
+			                    q_TraNo[NgayGiaoDich] < TuNgay
+			                ),
+			                CALCULATE(
+			                    SUM(q_TraNo[GocDaTra]),
+			                    q_TraNo[NgayGiaoDich] < TuNgay
+			                )
+			            )
+			        RETURN
+			            IF(
+			                CoSoDuDau,
+			                IF(
+			                    TuNgay >= MocTheoDoi,
+			                    DuNoGoc - COALESCE(GocDaTra, 0),
+			                    BLANK()
+			                ),
+			                IF(
+			                    NOT ISBLANK(NgayNhan) && NgayNhan < TuNgay,
+			                    TienVay - COALESCE(GocDaTra, 0),
+			                    0
+			                )
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 7923187f-e729-4b89-a025-434f698d84ee
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure VayThemTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    IF(
+			        ISEMPTY(tblKheUoc),
+			        BLANK(),
+			        COALESCE(
+			            CALCULATE(
+			                SUM(tblKheUoc[SoTienVay]),
+			                tblKheUoc[NgayNhanNo] >= TuNgay,
+			                tblKheUoc[NgayNhanNo] < DenNgay + 1
+			            ),
+			            0
+			        )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 59db5b8a-d0c0-4f54-96b9-ecefa2e0d35c
+
+	measure TraGocDanhMucTrongKy =
+			
+			SUMX(
+			    FILTER(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        NOT ISBLANK(tblKheUoc[MaKheUoc])
+			    ),
+			    CALCULATE([GocDaTraTrongKy])
+			)
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: ea1f81fd-b801-41b6-8998-b12503545d83
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure DuNoCuoiKy =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    SUMX(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR NgayNhan =
+			            CALCULATE(MAX(tblKheUoc[NgayNhanNo]))
+			        VAR TienVay =
+			            CALCULATE(SUM(tblKheUoc[SoTienVay]))
+			        VAR MocTheoDoi =
+			            CALCULATE(MAX(tblKheUoc[NgayBatDauTheoDoi]))
+			        VAR DuNoGoc =
+			            CALCULATE(SUM(tblKheUoc[DuNoBanDau]))
+			        VAR CoSoDuDau =
+			            NOT ISBLANK(MocTheoDoi)
+			        VAR GocDaTra =
+			            IF(
+			                CoSoDuDau,
+			                CALCULATE(
+			                    SUM(q_TraNo[GocDaTra]),
+			                    q_TraNo[NgayGiaoDich] >= MocTheoDoi,
+			                    q_TraNo[NgayGiaoDich] <= DenNgay
+			                ),
+			                CALCULATE(
+			                    SUM(q_TraNo[GocDaTra]),
+			                    q_TraNo[NgayGiaoDich] <= DenNgay
+			                )
+			            )
+			        RETURN
+			            IF(
+			                CoSoDuDau,
+			                IF(
+			                    DenNgay >= MocTheoDoi,
+			                    DuNoGoc - COALESCE(GocDaTra, 0),
+			                    BLANK()
+			                ),
+			                IF(
+			                    NOT ISBLANK(NgayNhan) && NgayNhan <= DenNgay,
+			                    TienVay - COALESCE(GocDaTra, 0),
+			                    0
+			                )
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 83b540f0-4cb2-47cd-8ade-4c8c79d3ef0f
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure HienThiKheUoc =
+			
+			IF(COUNTROWS(tblKheUoc) > 0, 1, BLANK())
+		formatString: 0
+		lineageTag: 0f140e27-37ea-471b-88d0-da88f904e6b3
+
+	measure SoKheUocConDuNo =
+			
+			COUNTROWS(
+			    FILTER(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        [DuNoCuoiKy] > 0
+			    )
+			)
+		formatString: 0
+		lineageTag: c930cab7-ef7e-4c70-8362-6f5bfacb6104
+
+	measure BienDongDuNoTrongKy =
+			
+			[DuNoCuoiKy] - [DuNoDauKy]
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 284d3fcd-efe7-4096-bf7a-b23f33fa0784
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure DuNoCuoiKyTyDong =
+			
+			[DuNoCuoiKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 4e5d6c7b-8a9f-4012-b3c4-d5e6f7a8b907
+
+	/// Dùng cho biểu đồ: trả BLANK khi dư nợ = 0 để không vẽ cột rỗng (vd. thành viên Blank do giao dịch không khớp khế ước).
+	measure DuNoCuoiKyTyDongBieuDo =
+			
+			VAR DuNo = [DuNoCuoiKy]
+			RETURN
+			    IF(ISBLANK(DuNo) || DuNo = 0, BLANK(), DIVIDE(DuNo, 1000000000))
+		formatString: #,0.00\ "tỷ"
+		lineageTag: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+
+	measure DuNoDauKyTyDong =
+			
+			[DuNoDauKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+
+	measure VayThemTrongKyTyDong =
+			
+			[VayThemTrongKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 3c4d5e6f-7a8b-4c9d-a0e1-2f3a4b5c6d7f
+
+	measure TraGocTrongKyTyDong =
+			
+			[TraGocDanhMucTrongKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 4d5e6f7a-8b9c-4d0e-b1f2-3a4b5c6d7e80
+
+	measure BienDongDuNoTyDong =
+			
+			[BienDongDuNoTrongKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 5e6f7a8b-9c0d-4e1f-a2b3-4c5d6e7f8a91
+
+	/// Gốc phải trả theo lịch luỹ kế đến cuối kỳ (từ mốc theo dõi nếu có), tính theo từng khế ước.
+	measure GocPhaiTraLuyKe =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    SUMX(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR BatDau = COALESCE(CALCULATE(MAX(tblKheUoc[NgayBatDauTheoDoi])), DATE(1900, 1, 1))
+			        RETURN
+			            CALCULATE(
+			                SUM(q_LichTraNo[GocPhaiTra]),
+			                q_LichTraNo[NgayDenHan] >= BatDau,
+			                q_LichTraNo[NgayDenHan] <= DenNgay
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 5c6d7e8f-9a0b-4c1d-e2f3-4a5b6c7d8e9b
+
+	/// Gốc đã ghi nhận (nhập tay + sao kê) luỹ kế đến cuối kỳ, cùng phạm vi với GocPhaiTraLuyKe.
+	measure GocDaGhiNhanLuyKe =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    SUMX(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR BatDau = COALESCE(CALCULATE(MAX(tblKheUoc[NgayBatDauTheoDoi])), DATE(1900, 1, 1))
+			        RETURN
+			            CALCULATE(
+			                SUM(q_TraNo[GocDaTra]),
+			                q_TraNo[NgayGiaoDich] >= BatDau,
+			                q_TraNo[NgayGiaoDich] <= DenNgay
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 6d7e8f9a-0b1c-4d2e-f3a4-5b6c7d8e9f0c
+
+	/// Dương = gốc đến hạn chưa được ghi nhận (quá hạn thật hoặc thiếu nhập liệu); âm = ghi nhận nhiều hơn lịch (trả trước / sai mã).
+	measure ChenhLechGoc =
+			
+			VAR PhaiTra = [GocPhaiTraLuyKe]
+			VAR DaGhi = [GocDaGhiNhanLuyKe]
+			RETURN
+			    IF(
+			        ISBLANK(PhaiTra) && ISBLANK(DaGhi),
+			        BLANK(),
+			        COALESCE(PhaiTra, 0) - COALESCE(DaGhi, 0)
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 7e8f9a0b-1c2d-4e3f-a4b5-6c7d8e9f0a1d
+
+	measure LaiPhiDuKienLuyKe =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    SUMX(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR BatDau = COALESCE(CALCULATE(MAX(tblKheUoc[NgayBatDauTheoDoi])), DATE(1900, 1, 1))
+			        RETURN
+			            CALCULATE(
+			                SUM(q_LichTraNo[LaiPhiDuKien]),
+			                q_LichTraNo[NgayDenHan] >= BatDau,
+			                q_LichTraNo[NgayDenHan] <= DenNgay
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 8f9a0b1c-2d3e-4f4a-b5c6-7d8e9f0a1b2e
+
+	measure LaiPhiDaGhiNhanLuyKe =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    SUMX(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR BatDau = COALESCE(CALCULATE(MAX(tblKheUoc[NgayBatDauTheoDoi])), DATE(1900, 1, 1))
+			        RETURN
+			            CALCULATE(
+			                SUM(q_TraNo[LaiPhiDaTra]),
+			                q_TraNo[NgayGiaoDich] >= BatDau,
+			                q_TraNo[NgayGiaoDich] <= DenNgay
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 9a0b1c2d-3e4f-4a5b-c6d7-8e9f0a1b2c3f
+
+	measure ChenhLechLaiPhi =
+			
+			VAR DuKien = [LaiPhiDuKienLuyKe]
+			VAR DaGhi = [LaiPhiDaGhiNhanLuyKe]
+			RETURN
+			    IF(
+			        ISBLANK(DuKien) && ISBLANK(DaGhi),
+			        BLANK(),
+			        COALESCE(DuKien, 0) - COALESCE(DaGhi, 0)
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 0b1c2d3e-4f5a-4b6c-d7e8-9f0a1b2c3d40
+
+	measure SoKyLaiDenHan =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    SUMX(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR BatDau = COALESCE(CALCULATE(MAX(tblKheUoc[NgayBatDauTheoDoi])), DATE(1900, 1, 1))
+			        RETURN
+			            CALCULATE(
+			                COUNTROWS(q_LichTraNo),
+			                q_LichTraNo[LaiPhiDuKien] > 0,
+			                q_LichTraNo[NgayDenHan] >= BatDau,
+			                q_LichTraNo[NgayDenHan] <= DenNgay
+			            )
+			    )
+		formatString: 0
+		lineageTag: 1c2d3e4f-5a6b-4c7d-e8f9-0a1b2c3d4e51
+
+	measure SoGiaoDichLaiGhiNhan =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        COUNTROWS(q_TraNo),
+			        q_TraNo[LaiPhiDaTra] > 0,
+			        q_TraNo[NgayGiaoDich] <= DenNgay
+			    )
+		formatString: 0
+		lineageTag: 2d3e4f5a-6b7c-4d8e-f9a0-1b2c3d4e5f62
+
+	measure NgayTraLaiGanNhat =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        MAX(q_TraNo[NgayGiaoDich]),
+			        q_TraNo[LaiPhiDaTra] > 0,
+			        q_TraNo[NgayGiaoDich] <= DenNgay
+			    )
+		formatString: dd/MM/yyyy
+		lineageTag: 3e4f5a6b-7c8d-4e9f-a0b1-2c3d4e5f6a73
+
+	measure NgayTraGocGanNhat =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        MAX(q_TraNo[NgayGiaoDich]),
+			        q_TraNo[GocDaTra] > 0,
+			        q_TraNo[NgayGiaoDich] <= DenNgay
+			    )
+		formatString: dd/MM/yyyy
+		lineageTag: 4f5a6b7c-8d9e-4fa0-b1c2-3d4e5f6a7b84
+
+	measure TrangThaiDoiChieu =
+			
+			VAR ThieuGoc = COALESCE([ChenhLechGoc], 0) > 1000
+			VAR ThieuLai = COALESCE([SoKyLaiDenHan], 0) > COALESCE([SoGiaoDichLaiGhiNhan], 0)
+			VAR DuThua = COALESCE([ChenhLechGoc], 0) < -1000
+			VAR LechUocTinhLai =
+			    NOT ThieuLai && ABS(COALESCE([ChenhLechLaiPhi], 0)) > 1000
+			RETURN
+			    IF(
+			        HASONEVALUE(tblKheUoc[MaKheUoc]),
+			        SWITCH(
+			            TRUE(),
+			            ThieuGoc && ThieuLai, "Thiếu gốc + lãi",
+			            ThieuGoc, "Thiếu gốc",
+			            ThieuLai, "Thiếu lãi",
+			            DuThua, "Ghi nhận > lịch",
+			            LechUocTinhLai, "Đã trả (lệch ước tính lãi)",
+			            "Đủ"
+			        )
+			    )
+		lineageTag: 5a6b7c8d-9e0f-4ab1-c2d3-4e5f6a7b8c95
+
+	measure GocPhaiTraLuyKeTyDong =
+			
+			[GocPhaiTraLuyKe]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 6b7c8d9e-0f1a-4bc2-d3e4-5f6a7b8c9da6
+
+	measure GocDaGhiNhanLuyKeTyDong =
+			
+			[GocDaGhiNhanLuyKe]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 7c8d9e0f-1a2b-4cd3-e4f5-6a7b8c9d0eb7
+
+	measure ChenhLechGocTyDong =
+			
+			[ChenhLechGoc]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 8d9e0f1a-2b3c-4de4-f5a6-7b8c9d0e1fc8
+
+	measure LaiPhiDuKienLuyKeTyDong =
+			
+			[LaiPhiDuKienLuyKe]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 9e0f1a2b-3c4d-4ef5-a6b7-8c9d0e1f2ad9
+
+	measure LaiPhiDaGhiNhanLuyKeTyDong =
+			
+			[LaiPhiDaGhiNhanLuyKe]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 0f1a2b3c-4d5e-4fa6-b7c8-9d0e1f2a3bea
+
+	measure ChenhLechLaiPhiTyDong =
+			
+			[ChenhLechLaiPhi]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 1a2b3c4d-5e6f-4ab7-c8d9-0e1f2a3b4cfb
+
+	/// Ngày làm mốc tính hạn: ngày cuối kỳ báo cáo, nhưng không vượt quá hôm nay.
+	measure NgayMocTinhHan =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN IF(DenNgay > TODAY(), TODAY(), DenNgay)
+		formatString: dd/MM/yyyy
+		lineageTag: 6c7d8e9f-0a1b-4c2d-8e3f-4a5b6c7d8e01
+
+	/// Số ngày từ mốc tính hạn đến ngày đáo hạn; chỉ tính khi khế ước còn dư nợ và chưa đáo hạn.
+	measure SoNgayDenDaoHan =
+			
+			IF(
+			    HASONEVALUE(tblKheUoc[MaKheUoc]),
+			    VAR Moc = [NgayMocTinhHan]
+			    VAR DaoHan = MAX(tblKheUoc[NgayDaoHan])
+			    VAR DuNo = [DuNoCuoiKy]
+			    RETURN
+			        IF(NOT ISBLANK(DaoHan) && DaoHan >= Moc && DuNo > 0, INT(DaoHan - Moc))
+			)
+		formatString: #,0
+		lineageTag: 7d8e9f0a-1b2c-4d3e-9f4a-5b6c7d8e9f02
+
+	/// Số ngày đã qua ngày đáo hạn mà vẫn còn dư nợ gốc (theo số liệu ghi nhận, không suy diễn nhóm nợ).
+	measure SoNgayQuaHan =
+			
+			IF(
+			    HASONEVALUE(tblKheUoc[MaKheUoc]),
+			    VAR Moc = [NgayMocTinhHan]
+			    VAR DaoHan = MAX(tblKheUoc[NgayDaoHan])
+			    VAR DuNo = [DuNoCuoiKy]
+			    RETURN
+			        IF(NOT ISBLANK(DaoHan) && DaoHan < Moc && DuNo > 0, INT(Moc - DaoHan))
+			)
+		formatString: #,0
+		lineageTag: 8e9f0a1b-2c3d-4e4f-a05b-6c7d8e9f0a03
+
+	measure TrangThaiKhoanVay =
+			
+			IF(
+			    HASONEVALUE(tblKheUoc[MaKheUoc]),
+			    VAR Moc = [NgayMocTinhHan]
+			    VAR DaoHan = MAX(tblKheUoc[NgayDaoHan])
+			    VAR NhanNo = MAX(tblKheUoc[NgayNhanNo])
+			    VAR DuNo = COALESCE([DuNoCuoiKy], 0)
+			    VAR QuaHan = COALESCE([SoNgayQuaHan], 0)
+			    VAR ConLai = [SoNgayDenDaoHan]
+			    RETURN
+			        SWITCH(
+			            TRUE(),
+			            ISBLANK(DaoHan), "Thiếu ngày đáo hạn",
+			            DuNo <= 0 && NOT ISBLANK(NhanNo) && NhanNo > Moc, "Chưa giải ngân",
+			            DuNo <= 0, "Đã tất toán",
+			            QuaHan > 0, "Quá hạn",
+			            ConLai <= 7, "Đến hạn ≤ 7 ngày",
+			            ConLai <= 30, "Đến hạn ≤ 30 ngày",
+			            "Trong hạn"
+			        )
+			)
+		lineageTag: 9f0a1b2c-3d4e-4f5a-b16c-7d8e9f0a1b04
+
+	measure MauTrangThaiKhoanVay =
+			
+			SWITCH(
+			    [TrangThaiKhoanVay],
+			    "Quá hạn", "#B91C1C",
+			    "Đến hạn ≤ 7 ngày", "#B91C1C",
+			    "Đến hạn ≤ 30 ngày", "#B45309",
+			    "Trong hạn", "#15803D",
+			    "Thiếu ngày đáo hạn", "#B45309",
+			    "#64748B"
+			)
+		lineageTag: 0a1b2c3d-4e5f-4a6b-c27d-8e9f0a1b2c05
+
+	measure SoKheUocQuaHan =
+			
+			IF(ISEMPTY(tblKheUoc), BLANK(), COALESCE(COUNTROWS(FILTER(VALUES(tblKheUoc[MaKheUoc]), [SoNgayQuaHan] > 0)), 0))
+		formatString: 0
+		lineageTag: 1b2c3d4e-5f6a-4b7c-d38e-9f0a1b2c3d06
+
+	measure DuNoQuaHan =
+			
+			SUMX(FILTER(VALUES(tblKheUoc[MaKheUoc]), [SoNgayQuaHan] > 0), [DuNoCuoiKy])
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 2c3d4e5f-6a7b-4c8d-e49f-0a1b2c3d4e07
+
+	measure SoKheUocDenHan30Ngay =
+			
+			IF(
+			    ISEMPTY(tblKheUoc),
+			    BLANK(),
+			    COALESCE(
+			        COUNTROWS(
+			            FILTER(
+			                VALUES(tblKheUoc[MaKheUoc]),
+			                VAR ConLai = [SoNgayDenDaoHan]
+			                RETURN NOT ISBLANK(ConLai) && ConLai <= 30
+			            )
+			        ),
+			        0
+			    )
+			)
+		formatString: 0
+		lineageTag: 3d4e5f6a-7b8c-4d9e-f5a0-1b2c3d4e5f08
+
+	measure DuNoDenHan30Ngay =
+			
+			SUMX(
+			    FILTER(
+			        VALUES(tblKheUoc[MaKheUoc]),
+			        VAR ConLai = [SoNgayDenDaoHan]
+			        RETURN NOT ISBLANK(ConLai) && ConLai <= 30
+			    ),
+			    [DuNoCuoiKy]
+			)
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 4e5f6a7b-8c9d-4ea0-a6b1-2c3d4e5f6a09
+
+	measure DuNoQuaHanTyDong =
+			
+			IF(ISEMPTY(tblKheUoc), BLANK(), COALESCE([DuNoQuaHan], 0))
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 5f6a7b8c-9d0e-4fb1-b7c2-3d4e5f6a7b0a
+
+	measure DuNoDenHan30NgayTyDong =
+			
+			IF(ISEMPTY(tblKheUoc), BLANK(), COALESCE([DuNoDenHan30Ngay], 0))
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 6a7b8c9d-0e1f-4ac2-c8d3-4e5f6a7b8c0b
+
+	/// Phần dương của ChenhLechGoc: gốc đã đến hạn theo lịch nhưng chưa được ghi nhận thanh toán.
+	measure GocChuaGhiNhan =
+			
+			VAR CL = [ChenhLechGoc]
+			RETURN IF(ISBLANK(CL), BLANK(), MAX(0, CL))
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 8c9d0e1f-2a3b-4ce4-ea05-6a7b8c9d0e1d
+
+	/// Phần âm của ChenhLechGoc: gốc đã ghi nhận nhiều hơn lịch đến hạn (trả trước hạn hoặc sai mã).
+	measure GocTraTruocHan =
+			
+			VAR CL = [ChenhLechGoc]
+			RETURN IF(ISBLANK(CL), BLANK(), MAX(0, -CL))
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 9d0e1f2a-3b4c-4df5-fb16-7b8c9d0e1f2e
+
+	/// Đã có đủ giao dịch lãi cho số kỳ đến hạn thì coi như đã trả xong; phần lệch là do lãi dự kiến chỉ là ước tính (thấu chi, số ngày thực tế).
+	measure LaiPhiChuaGhiNhan =
+			
+			VAR CL = [ChenhLechLaiPhi]
+			VAR DaTraDuKy = COALESCE([SoGiaoDichLaiGhiNhan], 0) >= COALESCE([SoKyLaiDenHan], 0)
+			RETURN IF(ISBLANK(CL) || DaTraDuKy, BLANK(), MAX(0, CL))
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 0e1f2a3b-4c5d-4ea6-ac27-8c9d0e1f2a3f
+
+	measure GocChuaGhiNhanTyDong =
+			
+			IF(ISEMPTY(tblKheUoc), BLANK(), COALESCE([GocChuaGhiNhan], 0))
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 1f2a3b4c-5d6e-4fb7-bd38-9d0e1f2a3b40
+
+	measure GocTraTruocHanTyDong =
+			
+			IF(ISEMPTY(tblKheUoc), BLANK(), COALESCE([GocTraTruocHan], 0))
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 2a3b4c5d-6e7f-4ac8-ce49-0e1f2a3b4c51
+
+	measure LaiPhiChuaGhiNhanTyDong =
+			
+			IF(ISEMPTY(tblKheUoc), BLANK(), COALESCE([LaiPhiChuaGhiNhan], 0))
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 3b4c5d6e-7f8a-4bd9-df5a-1f2a3b4c5d62
+
+	measure KheUocLienQuanKy =
+			
+			IF(
+			    HASONEVALUE(tblKheUoc[MaKheUoc]),
+			    IF(
+			        COALESCE([DuNoDauKy], 0) > 0
+			            || COALESCE([DuNoCuoiKy], 0) > 0
+			            || COALESCE([SoDongLichTrongKy], 0) > 0
+			            || COALESCE([SoDongTraNoTrongKy], 0) > 0,
+			        1,
+			        0
+			    )
+			)
+		formatString: 0
+		lineageTag: 7b8c9d0e-1f2a-4bd3-d9e4-5f6a7b8c9d0c
+
+	/// = 1 nếu khế ước có liên quan đến kỳ báo cáo: còn dư nợ đầu/cuối kỳ, có kỳ đến hạn trong kỳ, hoặc có giao dịch trong kỳ. Dùng làm bộ lọc dòng.
+	/// Cờ = 1 khi khế ước còn dư nợ và đáo hạn trong 30 ngày kể từ mốc tính hạn (dùng làm bộ lọc; BLANK không lọt qua phép so sánh).
+	measure SapDaoHan30Ngay =
+			
+			VAR ConLai = [SoNgayDenDaoHan]
+			RETURN IF(NOT ISBLANK(ConLai) && ConLai <= 30, 1)
+		formatString: 0
+		lineageTag: 4c5d6e7f-8a9b-4cea-e06b-2a3b4c5d6e73
+
+	column MaCongTy
+		dataType: string
+		lineageTag: 465e8aed-9a2a-4c0c-aca5-67ae74b8bea5
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaNganHang
+		dataType: string
+		lineageTag: 19feb189-531d-4649-9c7e-9984eacf2406
+		summarizeBy: none
+		sourceColumn: MaNganHang
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaKheUoc
+		dataType: string
+		lineageTag: 884bb0c8-fdea-449f-98a8-a72c0fa71647
+		summarizeBy: none
+		sourceColumn: MaKheUoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaHDTD
+		dataType: string
+		lineageTag: eeee7ec5-18b6-49cf-a3b4-a00837e9fd72
+		summarizeBy: none
+		sourceColumn: MaHDTD
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayNhanNo
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 3bba217a-ac6b-4d5b-98e6-eab6868bbff5
+		summarizeBy: none
+		sourceColumn: NgayNhanNo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column NgayDaoHan
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 02e6e9a5-d71b-45a8-be9d-e5acd3e036eb
+		summarizeBy: none
+		sourceColumn: NgayDaoHan
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SoTienVay
+		dataType: int64
+		formatString: #,0
+		lineageTag: 6c9ed3ff-5c7e-409c-a593-2f3fca0738d5
+		summarizeBy: sum
+		sourceColumn: SoTienVay
+
+		annotation SummarizationSetBy = Automatic
+
+	column LaiSuatNam
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 6a94955b-ed57-4a5e-89e1-82091f472efe
+		summarizeBy: sum
+		sourceColumn: LaiSuatNam
+
+		annotation SummarizationSetBy = Automatic
+
+	column PhuongThucTraGoc
+		dataType: string
+		lineageTag: 72ebc91c-d0c7-4095-a271-97bd351f6319
+		summarizeBy: none
+		sourceColumn: PhuongThucTraGoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayTraGocDauTien
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: ab44a3be-0644-4524-bffb-8e62e75762a1
+		summarizeBy: none
+		sourceColumn: NgayTraGocDauTien
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TanSuatTraGoc
+		dataType: string
+		lineageTag: 87ab9e58-7637-464d-8e21-7cd88a3c1b78
+		summarizeBy: none
+		sourceColumn: TanSuatTraGoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column TanSuatTraLai
+		dataType: string
+		lineageTag: 26bc9466-8828-45f7-b0e8-a4556b33b205
+		summarizeBy: none
+		sourceColumn: TanSuatTraLai
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayTraLaiDauTien
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: f1ea7c9d-dcd5-415c-a26f-1e5d9636f979
+		summarizeBy: none
+		sourceColumn: NgayTraLaiDauTien
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column CoSoTinhLai
+		dataType: int64
+		formatString: 0
+		lineageTag: d969aef3-ba2a-4412-b8a0-2ba9e393d78f
+		summarizeBy: sum
+		sourceColumn: CoSoTinhLai
+
+		annotation SummarizationSetBy = Automatic
+
+	column GhiChu
+		dataType: string
+		lineageTag: 3886c88d-bf8a-416a-810b-205a86fa3fbc
+		summarizeBy: none
+		sourceColumn: GhiChu
+
+		annotation SummarizationSetBy = Automatic
+
+	column DuNoBanDau
+		dataType: decimal
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 897b4459-4791-46a5-baa4-158f522a36e0
+		summarizeBy: sum
+		sourceColumn: DuNoBanDau
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	column NgayBatDauTheoDoi
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 52b24d3e-cda3-470b-b649-2fdd772eebe4
+		summarizeBy: none
+		sourceColumn: NgayBatDauTheoDoi
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition tblKheUoc = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\DuNo\Du_lieu_dau_vao_du_no.xlsx"), null, true),
+				
+				    DuLieu = Source{[Item="tblKheUoc", Kind="Table"]}[Data],
+				
+				    ChuanHoaChu = Table.TransformColumns(
+				        DuLieu,
+				        List.Transform(
+				            {
+				                "MaCongTy",
+				                "MaNganHang",
+				                "MaKheUoc",
+				                "MaHDTD",
+				                "PhuongThucTraGoc",
+				                "TanSuatTraGoc",
+				                "TanSuatTraLai"
+				            },
+				            (Cot) => {
+				                Cot,
+				                each
+				                    if _ = null then null
+				                    else
+				                        let
+				                            Chu = Text.Trim(Text.From(_))
+				                        in
+				                            if Chu = "" then null else Chu,
+				                type nullable text
+				            }
+				        )
+				    ),
+				
+				    ChuanHoaNgayTrong = Table.TransformColumns(
+				        ChuanHoaChu,
+				        List.Transform(
+				            {
+				                "NgayNhanNo",
+				                "NgayDaoHan",
+				                "NgayTraGocDauTien",
+				                "NgayTraLaiDauTien"
+				            },
+				            (Cot) => {
+				                Cot,
+				                each
+				                    if _ is text then
+				                        if Text.Trim(_) = "" then null else _
+				                    else _,
+				                type any
+				            }
+				        )
+				    ),
+				
+				    DinhDangDuLieu = Table.TransformColumnTypes(
+				        ChuanHoaNgayTrong,
+				        {
+				            {"MaCongTy", type text},
+				            {"MaNganHang", type text},
+				            {"MaKheUoc", type text},
+				            {"MaHDTD", type text},
+				            {"NgayNhanNo", type date},
+				            {"NgayDaoHan", type date},
+				            {"SoTienVay", Int64.Type},
+				            {"LaiSuatNam", type number},
+				            {"PhuongThucTraGoc", type text},
+				            {"NgayTraGocDauTien", type date},
+				            {"TanSuatTraGoc", type text},
+				            {"TanSuatTraLai", type text},
+				            {"NgayTraLaiDauTien", type date},
+				            {"CoSoTinhLai", Int64.Type},
+				            {"GhiChu", type text}
+				        },
+				        "vi-VN"
+				    )
+				,
+				    // Dư nợ dài hạn bắt đầu theo dõi từ ngày này.
+				    MocTheoDoi = #date(2026, 9, 1),
+				
+				    LichGoc = Source{[Item="tblLichDaiHan", Kind="Table"]}[Data],
+				
+				    LichChuanChu = Table.TransformColumns(
+				        LichGoc,
+				        List.Transform(
+				            {"MaCongTy", "MaNganHang", "MaKheUoc"},
+				            (Cot) => {
+				                Cot,
+				                each if _ = null then null
+				                     else Text.Trim(Text.From(_)),
+				                type nullable text
+				            }
+				        )
+				    ),
+				
+				    LichCoMa = Table.SelectRows(
+				        LichChuanChu,
+				        each [MaKheUoc] <> null and [MaKheUoc] <> ""
+				    ),
+				
+				    LichDinhDang = Table.TransformColumnTypes(
+				        LichCoMa,
+				        {
+				            {"NgayDenHan", type date},
+				            {"DuNoTheoLichDauKy", Currency.Type}
+				        },
+				        "vi-VN"
+				    ),
+				
+				    // Khoản đã có trong KHE_UOC không bổ sung lần nữa.
+				    MaDaCo = List.Buffer(DinhDangDuLieu[MaKheUoc]),
+				
+				    LichCanBoSung = Table.SelectRows(
+				        LichDinhDang,
+				        each not List.Contains(MaDaCo, [MaKheUoc])
+				    ),
+				
+				    GomTheoKhoan = Table.Group(
+				        LichCanBoSung,
+				        {"MaCongTy", "MaNganHang", "MaKheUoc"},
+				        {
+				            {
+				                "DuNoBanDau",
+				                each
+				                    let
+				                        SapXep = Table.Sort(
+				                            _,
+				                            {{"NgayDenHan", Order.Ascending}}
+				                        ),
+				                        DongDau = SapXep{0}
+				                    in
+				                        if DongDau[DuNoTheoLichDauKy] = null then
+				                            error "Thiếu dư nợ đầu kỳ ở dòng lịch đầu tiên."
+				                        else DongDau[DuNoTheoLichDauKy],
+				                Currency.Type
+				            },
+				            {
+				                "NgayDaoHan",
+				                each List.Max([NgayDenHan]),
+				                type date
+				            }
+				        }
+				    ),
+				
+				    ThemMoc = Table.AddColumn(
+				        GomTheoKhoan,
+				        "NgayBatDauTheoDoi",
+				        each MocTheoDoi,
+				        type date
+				    ),
+				
+				    ThemPhuongThuc = Table.AddColumn(
+				        ThemMoc,
+				        "PhuongThucTraGoc",
+				        each "THEO_LICH",
+				        type text
+				    ),
+				
+				    // Các cột giải ngân và lãi suất của dòng bổ sung để trống.
+				    // Không biến dư nợ ban đầu thành khoản vay mới.
+				    GopDanhMuc = Table.Combine(
+				        {DinhDangDuLieu, ThemPhuongThuc}
+				    ),
+				
+				    KetQua = Table.TransformColumnTypes(
+				        GopDanhMuc,
+				        {
+				            {"NgayNhanNo", type date},
+				            {"NgayDaoHan", type date},
+				            {"SoTienVay", Int64.Type},
+				            {"DuNoBanDau", Currency.Type},
+				            {"NgayBatDauTheoDoi", type date}
+				        }
+				    )
+				in
+				    KetQua
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

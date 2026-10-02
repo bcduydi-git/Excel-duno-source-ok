@@ -1,0 +1,732 @@
+table q_LichTraNo
+	lineageTag: 02838121-6808-4733-8bd3-afe534e705cd
+
+	measure SoDongLichTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        COUNTROWS(q_LichTraNo),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] >= TuNgay),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] < DenNgay + 1)
+			    )
+		formatString: 0
+		lineageTag: 8cb44889-b37a-469b-a8b4-9a30070dc032
+
+	measure GocDenHanTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        SUM(q_LichTraNo[GocPhaiTra]),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] >= TuNgay),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] < DenNgay + 1)
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: fc2afdf4-a68b-438e-b994-4e80bde81104
+
+	measure LaiPhiDenHanTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        SUM(q_LichTraNo[LaiPhiDuKien]),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] >= TuNgay),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] < DenNgay + 1)
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 6bb7194e-febb-47ed-adde-9bd6c02f2890
+
+	measure TongDenHanTrongKy =
+			
+			[GocDenHanTrongKy] + [LaiPhiDenHanTrongKy]
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: a18d0a3e-1215-414a-bd28-9c7ca68e2d01
+
+	/// Phần gốc của các kỳ đến hạn trong kỳ báo cáo chưa được thanh toán tính đến cuối kỳ (nghĩa vụ đến hạn, không phải dư nợ).
+	measure GocConPhaiTraCuoiKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			
+			VAR CacKyTrongKhoang =
+			    CALCULATETABLE(
+			        SUMMARIZE(
+			            q_LichTraNo,
+			            q_LichTraNo[MaKheUoc],
+			            q_LichTraNo[NgayDenHan],
+			            "GocCuaKy", SUM(q_LichTraNo[GocPhaiTra])
+			        ),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] >= TuNgay),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] < DenNgay + 1)
+			    )
+			
+			RETURN
+			    SUMX(
+			        CacKyTrongKhoang,
+			        VAR MaDangTinh = q_LichTraNo[MaKheUoc]
+			        VAR NgayKy = q_LichTraNo[NgayDenHan]
+			        VAR GocKy = [GocCuaKy]
+			
+			        VAR MocTheoDoi =
+			            LOOKUPVALUE(
+			                tblKheUoc[NgayBatDauTheoDoi],
+			                tblKheUoc[MaKheUoc], MaDangTinh
+			            )
+			
+			        VAR NgayBatDau =
+			            COALESCE(MocTheoDoi, DATE(1900, 1, 1))
+			
+			        VAR GocCacKyTruoc =
+			            SUMX(
+			                FILTER(
+			                    ALL(q_LichTraNo),
+			                    q_LichTraNo[MaKheUoc] = MaDangTinh
+			                        && q_LichTraNo[NgayDenHan] >= NgayBatDau
+			                        && q_LichTraNo[NgayDenHan] < NgayKy
+			                ),
+			                q_LichTraNo[GocPhaiTra]
+			            )
+			
+			        VAR GocDaThanhToan =
+			            CALCULATE(
+			                SUM(q_TraNo[GocDaTra]),
+			                REMOVEFILTERS(q_LichTraNo),
+			                KEEPFILTERS(q_TraNo[MaKheUoc] = MaDangTinh),
+			                q_TraNo[NgayGiaoDich] >= NgayBatDau,
+			                q_TraNo[NgayGiaoDich] < DenNgay + 1
+			            )
+			
+			        VAR TienConDeTraKyNay =
+			            MAX(
+			                0,
+			                COALESCE(GocDaThanhToan, 0)
+			                    - COALESCE(GocCacKyTruoc, 0)
+			            )
+			
+			        RETURN
+			            IF(
+			                GocKy > 0 && NgayKy >= NgayBatDau,
+			                MAX(0, GocKy - TienConDeTraKyNay),
+			                BLANK()
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 35ac0812-d207-4f09-9665-7926279465b1
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure GocDenHanTrongKyTrieu =
+			
+			DIVIDE([GocDenHanTrongKy], 1000000)
+		formatString: #,0\ "triệu"
+		lineageTag: 6f7e8d9c-0b1a-4234-95c6-e7f8a9b0c108
+
+	measure LaiPhiDenHanTrongKyTrieu =
+			
+			DIVIDE([LaiPhiDenHanTrongKy], 1000000)
+		formatString: #,0\ "triệu"
+		lineageTag: 8a9b0c1d-2e3f-4456-a7b8-c9d0e1f2a309
+
+	measure GocDenHanTrongKyTyDong =
+			
+			[GocDenHanTrongKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 6f7a8b9c-0d1e-4f2a-b3c4-5d6e7f8a9b02
+
+	measure LaiPhiDenHanTrongKyTyDong =
+			
+			[LaiPhiDenHanTrongKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 7a8b9c0d-1e2f-4a3b-c4d5-6e7f8a9b0c13
+
+	measure TongDenHanTrongKyTyDong =
+			
+			[TongDenHanTrongKy]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 8b9c0d1e-2f3a-4b4c-d5e6-7f8a9b0c1d24
+
+	measure GocConPhaiTraTyDong =
+			
+			IF(ISEMPTY(tblKheUoc), BLANK(), COALESCE([GocConPhaiTraCuoiKy], 0))
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 9c0d1e2f-3a4b-4c5d-e6f7-8a9b0c1d2e35
+
+	measure NgayDenHanGanNhatTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        MIN(q_LichTraNo[NgayDenHan]),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] >= TuNgay),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] < DenNgay + 1)
+			    )
+		formatString: dd/MM/yyyy
+		lineageTag: 5d6e7f8a-9b0c-4dfb-f17c-3b4c5d6e7f84
+
+	measure SoKheUocDenHanTrongKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    CALCULATE(
+			        DISTINCTCOUNT(q_LichTraNo[MaKheUoc]),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] >= TuNgay),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] < DenNgay + 1)
+			    )
+		formatString: 0
+		lineageTag: 6e7f8a9b-0c1d-4eac-a28d-4c5d6e7f8a95
+
+	/// Mức lệch giữa lãi dự kiến và lãi thực trả vẫn coi là đã trả đủ. Sửa số ở đây để đổi ngưỡng cho toàn báo cáo.
+	measure NguongLechLai = 5000000
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 1d2e3f4a-5b6c-4df1-f7d2-9b0c1d2e3f4a
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	/// Lãi của kỳ chưa thanh toán. Kỳ đã tất toán hết gốc thì coi như lãi cũng xong; kỳ chỉ có lãi thì so tiền theo thứ tự kỳ, lệch trong NguongLechLai vẫn coi là đã trả.
+	measure LaiPhiConPhaiTraCuoiKy =
+			
+			VAR TuNgay = MIN(NgayBaoCao[Date])
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			VAR Nguong = [NguongLechLai]
+			VAR CacKyTrongKhoang =
+			    CALCULATETABLE(
+			        SUMMARIZE(
+			            q_LichTraNo,
+			            q_LichTraNo[MaKheUoc],
+			            q_LichTraNo[NgayDenHan],
+			            "GocCuaKy", SUM(q_LichTraNo[GocPhaiTra]),
+			            "LaiCuaKy", SUM(q_LichTraNo[LaiPhiDuKien])
+			        ),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] >= TuNgay),
+			        KEEPFILTERS(q_LichTraNo[NgayDenHan] < DenNgay + 1)
+			    )
+			RETURN
+			    SUMX(
+			        CacKyTrongKhoang,
+			        VAR MaDangTinh = q_LichTraNo[MaKheUoc]
+			        VAR NgayKy = q_LichTraNo[NgayDenHan]
+			        VAR GocKy = [GocCuaKy]
+			        VAR LaiKy = [LaiCuaKy]
+			        VAR NgayBatDau =
+			            COALESCE(
+			                LOOKUPVALUE(tblKheUoc[NgayBatDauTheoDoi], tblKheUoc[MaKheUoc], MaDangTinh),
+			                DATE(1900, 1, 1)
+			            )
+			        VAR CacKyTruoc =
+			            FILTER(
+			                ALL(q_LichTraNo),
+			                q_LichTraNo[MaKheUoc] = MaDangTinh
+			                    && q_LichTraNo[NgayDenHan] >= NgayBatDau
+			                    && q_LichTraNo[NgayDenHan] < NgayKy
+			            )
+			        VAR GocCacKyTruoc = SUMX(CacKyTruoc, q_LichTraNo[GocPhaiTra])
+			        VAR GocDaThanhToan =
+			            CALCULATE(
+			                SUM(q_TraNo[GocDaTra]),
+			                REMOVEFILTERS(q_LichTraNo),
+			                KEEPFILTERS(q_TraNo[MaKheUoc] = MaDangTinh),
+			                q_TraNo[NgayGiaoDich] >= NgayBatDau,
+			                q_TraNo[NgayGiaoDich] < DenNgay + 1
+			            )
+			        VAR GocConCuaKy =
+			            MAX(0, GocKy - MAX(0, COALESCE(GocDaThanhToan, 0) - COALESCE(GocCacKyTruoc, 0)))
+			        // Lãi chỉ khớp trong cửa sổ của kỳ này: sau kỳ lãi liền trước đến hết kỳ báo cáo.
+			        // Không cho phần trả dư của kỳ trước chảy sang che kỳ này.
+			        VAR NgayKyLaiTruoc =
+			            MAXX(
+			                FILTER(CacKyTruoc, q_LichTraNo[LaiPhiDuKien] > 0),
+			                q_LichTraNo[NgayDenHan]
+			            )
+			        VAR MocCuaSo = COALESCE(NgayKyLaiTruoc + 1, NgayBatDau)
+			        VAR LaiTraTrongCuaSo =
+			            CALCULATE(
+			                SUM(q_TraNo[LaiPhiDaTra]),
+			                REMOVEFILTERS(q_LichTraNo),
+			                KEEPFILTERS(q_TraNo[MaKheUoc] = MaDangTinh),
+			                q_TraNo[NgayGiaoDich] >= MocCuaSo,
+			                q_TraNo[NgayGiaoDich] < DenNgay + 1
+			            )
+			        VAR SoGiaoDichLaiTrongCuaSo =
+			            CALCULATE(
+			                COUNTROWS(q_TraNo),
+			                REMOVEFILTERS(q_LichTraNo),
+			                KEEPFILTERS(q_TraNo[MaKheUoc] = MaDangTinh),
+			                q_TraNo[LaiPhiDaTra] > 0,
+			                q_TraNo[NgayGiaoDich] >= MocCuaSo,
+			                q_TraNo[NgayGiaoDich] < DenNgay + 1
+			            )
+			        VAR CoGiaoDichLai = COALESCE(SoGiaoDichLaiTrongCuaSo, 0) > 0
+			        VAR LaiConCuaKy = MAX(0, LaiKy - COALESCE(LaiTraTrongCuaSo, 0))
+			        RETURN
+			            IF(
+			                LaiKy > 0 && NgayKy >= NgayBatDau && NOT (GocKy > 0 && GocConCuaKy = 0),
+			                // Ngưỡng lệch chỉ áp dụng khi đã có giao dịch trả lãi; chưa trả đồng nào thì luôn là chưa thanh toán.
+			                IF(NOT CoGiaoDichLai, LaiKy, IF(LaiConCuaKy > Nguong, LaiConCuaKy))
+			            )
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 7f8a9b0c-1d2e-4fbd-b39e-5d6e7f8a9b06
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	/// = 1 khi kỳ còn gốc hoặc lãi chưa thanh toán. Dùng làm bộ lọc dòng.
+	measure KyChuaThanhToan =
+			
+			IF(
+			    COALESCE([GocConPhaiTraCuoiKy], 0) > 0
+			        || COALESCE([LaiPhiConPhaiTraCuoiKy], 0) > 0,
+			    1
+			)
+		formatString: 0
+		lineageTag: 8a9b0c1d-2e3f-4ace-c4af-6e7f8a9b0c17
+
+	measure SoNgayQuaHanKy =
+			
+			IF(
+			    HASONEVALUE(q_LichTraNo[NgayDenHan]),
+			    VAR Moc = [NgayMocTinhHan]
+			    VAR NgayKy = MAX(q_LichTraNo[NgayDenHan])
+			    RETURN IF(NgayKy < Moc, INT(Moc - NgayKy))
+			)
+		formatString: #,0
+		lineageTag: 9b0c1d2e-3f4a-4bdf-d5b0-7f8a9b0c1d28
+
+	measure SoNgayConDenHanKy =
+			
+			IF(
+			    HASONEVALUE(q_LichTraNo[NgayDenHan]),
+			    VAR Moc = [NgayMocTinhHan]
+			    VAR NgayKy = MAX(q_LichTraNo[NgayDenHan])
+			    RETURN IF(NgayKy >= Moc, INT(NgayKy - Moc))
+			)
+		formatString: #,0
+		lineageTag: 0c1d2e3f-4a5b-4ce0-e6c1-8a9b0c1d2e39
+
+	/// Gốc đã trả hết thì coi như kỳ đã thanh toán (không xét lãi); kỳ chỉ có lãi thì lệch trong NguongLechLai vẫn tính là đã thanh toán.
+	measure TrangThaiThanhToanKy =
+			
+			IF(
+			    COALESCE([KyChuaThanhToan], 0) > 0,
+			    "Chưa thanh toán",
+			    "Đã thanh toán"
+			)
+		lineageTag: 2e3f4a5b-6c7d-4a02-b8e3-0c1d2e3f4a5b
+
+	measure MauTrangThaiThanhToanKy =
+			
+			IF(COALESCE([KyChuaThanhToan], 0) > 0, "#B91C1C", "#15803D")
+		lineageTag: 3f4a5b6c-7d8e-4b13-c9f4-1d2e3f4a5b6c
+
+	column MaCongTy
+		dataType: string
+		lineageTag: 4018005b-4414-4444-913e-65cadaa20a9c
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaNganHang
+		dataType: string
+		lineageTag: 44af84ba-12d9-4224-9e94-111063d8f79d
+		summarizeBy: none
+		sourceColumn: MaNganHang
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaKheUoc
+		dataType: string
+		lineageTag: e7b7cd79-81e6-4238-ac5b-a29a9c1396fb
+		summarizeBy: none
+		sourceColumn: MaKheUoc
+
+		annotation SummarizationSetBy = Automatic
+
+	column KyTraNo
+		dataType: int64
+		formatString: 0
+		lineageTag: 161487f7-3033-46e6-8a72-979bd7d21675
+		summarizeBy: sum
+		sourceColumn: KyTraNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayDenHan
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 258aef90-a5f9-4000-8e78-f0dcfbe7a46b
+		summarizeBy: none
+		sourceColumn: NgayDenHan
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TuNgayTinhLai
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 512cd07e-4834-484a-9ff7-7a34f053e25e
+		summarizeBy: none
+		sourceColumn: TuNgayTinhLai
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SoNgayTinhLai
+		dataType: int64
+		formatString: 0
+		lineageTag: 1de12ee0-31f4-44ba-9779-1af326055301
+		summarizeBy: sum
+		sourceColumn: SoNgayTinhLai
+
+		annotation SummarizationSetBy = Automatic
+
+	column GocPhaiTra
+		dataType: int64
+		formatString: #,0
+		lineageTag: 776a7feb-312d-491c-955a-7f1045c2fccc
+		summarizeBy: sum
+		sourceColumn: GocPhaiTra
+
+		annotation SummarizationSetBy = Automatic
+
+	column LaiPhiDuKien
+		dataType: int64
+		formatString: #,0
+		lineageTag: 92fa6fae-556e-4bdd-aa33-92857eaa3a40
+		summarizeBy: sum
+		sourceColumn: LaiPhiDuKien
+
+		annotation SummarizationSetBy = Automatic
+
+	column TongPhaiTra
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9bf826ae-0f91-47a8-9f8d-83beb8749670
+		summarizeBy: sum
+		sourceColumn: TongPhaiTra
+
+		annotation SummarizationSetBy = Automatic
+
+	column NguonLich
+		dataType: string
+		lineageTag: cda390c5-a6bc-4340-ba8b-b37f70cc1c0f
+		summarizeBy: none
+		sourceColumn: NguonLich
+
+		annotation SummarizationSetBy = Automatic
+
+	partition q_LichTraNo = m
+		mode: import
+		source =
+				let
+				    // 1. NGUỒN
+				    KheUoc = tblKheUoc,
+				    LichNhap = tblLichDaiHan,
+				    Khoa = {"MaCongTy", "MaNganHang", "MaKheUoc"},
+				
+				    KieuLich = type table [
+				        KyTraNo = Int64.Type,
+				        NgayDenHan = date,
+				        TuNgayTinhLai = nullable date,
+				        SoNgayTinhLai = nullable number,
+				        GocPhaiTra = nullable number,
+				        LaiPhiDuKien = nullable number,
+				        TongPhaiTra = nullable number,
+				        NguonLich = text
+				    ],
+				
+				    // 2. LỊCH NHẬP TAY
+				    ChonLichNhap = Table.SelectColumns(
+				        LichNhap,
+				        Khoa & {
+				            "KyTraNo",
+				            "NgayDenHan",
+				            "GocPhaiTra",
+				            "TongPhaiTra"
+				        }
+				    ),
+				
+				    LaiPhiLichNhap = Table.AddColumn(
+				        ChonLichNhap,
+				        "LaiPhiDuKien",
+				        each
+				            if [TongPhaiTra] = null or [GocPhaiTra] = null
+				            then null
+				            else [TongPhaiTra] - [GocPhaiTra],
+				        type nullable number
+				    ),
+				
+				    TuNgayLichNhap = Table.AddColumn(
+				        LaiPhiLichNhap,
+				        "TuNgayTinhLai",
+				        each null,
+				        type nullable date
+				    ),
+				
+				    SoNgayLichNhap = Table.AddColumn(
+				        TuNgayLichNhap,
+				        "SoNgayTinhLai",
+				        each null,
+				        type nullable number
+				    ),
+				
+				    NguonLichNhap = Table.AddColumn(
+				        SoNgayLichNhap,
+				        "NguonLich",
+				        each "NHAP_TAY",
+				        type text
+				    ),
+				
+				    // 3. CHỈ TỰ SINH CHO KHOẢN CHƯA CÓ LỊCH NHẬP TAY
+				    ChuaCoLichNhap = Table.NestedJoin(
+				        KheUoc,
+				        Khoa,
+				        LichNhap,
+				        Khoa,
+				        "LichDaNhap",
+				        JoinKind.LeftAnti
+				    ),
+				
+				    // 4. HÀM SINH LỊCH CHO MỘT KHẾ ƯỚC
+				    TaoLich = (r as record) as table =>
+				        let
+				            MaKU = r[MaKheUoc],
+				            NganHang = r[MaNganHang],
+				            NhanNo = r[NgayNhanNo],
+				            DaoHan = r[NgayDaoHan],
+				            SoTien = r[SoTienVay],
+				            LaiSuat = r[LaiSuatNam],
+				            CoSo = r[CoSoTinhLai],
+				            PhuongThuc = r[PhuongThucTraGoc],
+				            TanSuat = r[TanSuatTraLai],
+				            NgayNhap = r[NgayTraLaiDauTien],
+				
+				            NgayCoDinh =
+				                if NganHang = "LPBank" then 25
+				                else if NganHang = "VPBank" then 15
+				                else if NganHang = "HDBank" then
+				                    if MaKU = "Thấu chi HDBank" then 15 else 20
+				                else null,
+				
+				            NgayDau =
+				                if NgayNhap <> null then NgayNhap
+				                else if NgayCoDinh = null or NhanNo = null then null
+				                else
+				                    let
+				                        NgayTrongThang = #date(
+				                            Date.Year(NhanNo),
+				                            Date.Month(NhanNo),
+				                            NgayCoDinh
+				                        )
+				                    in
+				                        if NgayTrongThang > NhanNo then
+				                            NgayTrongThang
+				                        else
+				                            Date.AddMonths(NgayTrongThang, 1),
+				
+				            BuocThang =
+				                if TanSuat = "THANG" then 1
+				                else if TanSuat = "QUY" then 3
+				                else if TanSuat = "6_THANG" then 6
+				                else if TanSuat = "CUOI_KY" then 0
+				                else
+				                    error Error.Record(
+				                        "TanSuatKhongHopLe",
+				                        "Tần suất trả lãi không hợp lệ.",
+				                        [MaKheUoc = MaKU, TanSuatTraLai = TanSuat]
+				                    ),
+				
+				            NgayDinhKy =
+				                if PhuongThuc <> "CUOI_KY" then
+				                    error Error.Record(
+				                        "ChuaCoLich",
+				                        "Khoản này chưa có lịch nhập tay và chưa hỗ trợ tự sinh phương thức trả gốc này.",
+				                        [MaKheUoc = MaKU, PhuongThucTraGoc = PhuongThuc]
+				                    )
+				                else if NhanNo = null or DaoHan = null then
+				                    error Error.Record(
+				                        "ThieuNgay",
+				                        "Thiếu ngày nhận nợ hoặc ngày đáo hạn.",
+				                        [MaKheUoc = MaKU]
+				                    )
+				                else if DaoHan <= NhanNo then
+				                    error Error.Record(
+				                        "NgayKhongHopLe",
+				                        "Ngày đáo hạn phải sau ngày nhận nợ.",
+				                        [MaKheUoc = MaKU]
+				                    )
+				                else if SoTien = null then
+				                    error Error.Record(
+				                        "ThieuSoTien",
+				                        "Thiếu số tiền vay.",
+				                        [MaKheUoc = MaKU]
+				                    )
+				                else if SoTien <= 0 then
+				                    error Error.Record(
+				                        "SoTienKhongHopLe",
+				                        "Số tiền vay phải lớn hơn 0.",
+				                        [MaKheUoc = MaKU]
+				                    )
+				                else if BuocThang = 0 then
+				                    {}
+				                else if NgayDau = null then
+				                    error Error.Record(
+				                        "ThieuNgayTraLai",
+				                        "Cần nhập ngày trả lãi đầu tiên cho khế ước này.",
+				                        [MaKheUoc = MaKU, MaNganHang = NganHang]
+				                    )
+				                else if NgayDau <= NhanNo then
+				                    error Error.Record(
+				                        "NgayTraLaiKhongHopLe",
+				                        "Ngày trả lãi đầu tiên phải sau ngày nhận nợ.",
+				                        [MaKheUoc = MaKU]
+				                    )
+				                else
+				                    List.Generate(
+				                        () => 0,
+				                        (i) => Date.AddMonths(
+				                            NgayDau, i * BuocThang
+				                        ) < DaoHan,
+				                        (i) => i + 1,
+				                        (i) => Date.AddMonths(
+				                            NgayDau, i * BuocThang
+				                        )
+				                    ),
+				
+				            // Kỳ cuối luôn ở ngày đáo hạn, không tạo trùng ngày
+				            CacNgay = NgayDinhKy & {DaoHan},
+				
+				            CacKy = List.Transform(
+				                List.Positions(CacNgay),
+				                (i) =>
+				                    let
+				                        TuNgay =
+				                            if i = 0 then NhanNo
+				                            else CacNgay{i - 1},
+				
+				                        DenNgay = CacNgay{i},
+				                        SoNgay = Duration.Days(DenNgay - TuNgay),
+				
+				                        Goc =
+				                            if DenNgay = DaoHan then SoTien
+				                            else 0,
+				
+				                        Lai =
+				                            if LaiSuat = null or CoSo = null then null
+				                            else if LaiSuat < 0 or not List.Contains({360, 365}, CoSo) then
+				                                error Error.Record(
+				                                    "LaiSuatKhongHopLe",
+				                                    "Kiểm tra lãi suất và cơ sở tính lãi 360/365.",
+				                                    [MaKheUoc = MaKU]
+				                                )
+				                            else
+				                                Number.Round(
+				                                    SoTien * LaiSuat * SoNgay / CoSo,
+				                                    0,
+				                                    RoundingMode.AwayFromZero
+				                                )
+				                    in
+				                        [
+				                            KyTraNo = i + 1,
+				                            NgayDenHan = DenNgay,
+				                            TuNgayTinhLai = TuNgay,
+				                            SoNgayTinhLai = SoNgay,
+				                            GocPhaiTra = Goc,
+				                            LaiPhiDuKien = Lai,
+				                            TongPhaiTra =
+				                                if Lai = null then null else Goc + Lai,
+				                            NguonLich = "TU_SINH_CUOI_KY"
+				                        ]
+				            )
+				        in
+				            Table.FromRecords(CacKy, KieuLich),
+				
+				    // 5. TỰ SINH LỊCH
+				    ThemLich = Table.AddColumn(
+				        ChuaCoLichNhap,
+				        "Lich",
+				        each TaoLich(_),
+				        KieuLich
+				    ),
+				
+				    ChonCotTuSinh = Table.SelectColumns(
+				        ThemLich,
+				        Khoa & {"Lich"}
+				    ),
+				
+				    MoRongLich = Table.ExpandTableColumn(
+				        ChonCotTuSinh,
+				        "Lich",
+				        {
+				            "KyTraNo",
+				            "NgayDenHan",
+				            "TuNgayTinhLai",
+				            "SoNgayTinhLai",
+				            "GocPhaiTra",
+				            "LaiPhiDuKien",
+				            "TongPhaiTra",
+				            "NguonLich"
+				        }
+				    ),
+				
+				    // 6. GỘP THÀNH MỘT BẢNG LỊCH
+				    GopLich = Table.Combine({NguonLichNhap, MoRongLich}),
+				
+				    DinhDang = Table.TransformColumnTypes(
+				        GopLich,
+				        {
+				            {"MaCongTy", type text},
+				            {"MaNganHang", type text},
+				            {"MaKheUoc", type text},
+				            {"KyTraNo", Int64.Type},
+				            {"NgayDenHan", type date},
+				            {"TuNgayTinhLai", type date},
+				            {"SoNgayTinhLai", Int64.Type},
+				            {"GocPhaiTra", Int64.Type},
+				            {"LaiPhiDuKien", Int64.Type},
+				            {"TongPhaiTra", Int64.Type},
+				            {"NguonLich", type text}
+				        },
+				        "vi-VN"
+				    ),
+				
+				    SapCot = Table.ReorderColumns(
+				        DinhDang,
+				        {
+				            "MaCongTy",
+				            "MaNganHang",
+				            "MaKheUoc",
+				            "KyTraNo",
+				            "NgayDenHan",
+				            "TuNgayTinhLai",
+				            "SoNgayTinhLai",
+				            "GocPhaiTra",
+				            "LaiPhiDuKien",
+				            "TongPhaiTra",
+				            "NguonLich"
+				        }
+				    ),
+				
+				    KetQua = Table.Sort(
+				        SapCot,
+				        {
+				            {"NgayDenHan", Order.Ascending},
+				            {"MaCongTy", Order.Ascending},
+				            {"MaNganHang", Order.Ascending},
+				            {"MaKheUoc", Order.Ascending}
+				        }
+				    )
+				in
+				    KetQua
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

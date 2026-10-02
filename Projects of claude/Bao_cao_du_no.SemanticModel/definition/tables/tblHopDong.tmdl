@@ -1,0 +1,234 @@
+table tblHopDong
+	lineageTag: 06b0b90d-9b30-448b-baf7-e42e2dda1001
+
+	/// Hạn mức của các hợp đồng đang hiệu lực tại ngày cuối kỳ báo cáo.
+	measure TongHanMucTinDung =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    COALESCE(
+			        CALCULATE(
+			            SUM(tblHopDong[HanMucTong]),
+			            FILTER(
+			                tblHopDong,
+			                tblHopDong[NgayHieuLuc] <= DenNgay
+			                    && (ISBLANK(tblHopDong[NgayHetHan]) || tblHopDong[NgayHetHan] >= DenNgay)
+			            )
+			        ),
+			        0
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 6e752b82-dea2-4751-a280-8048aaad81d1
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure HanMucConLai =
+			
+			[TongHanMucTinDung] - COALESCE([DuNoTrongHanMucHieuLuc], 0)
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 11bb27c4-9c6f-49fe-9f54-69aaa923fdd0
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure TyLeSuDungHanMuc =
+			
+			DIVIDE([DuNoTrongHanMucHieuLuc], [TongHanMucTinDung])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 18d5883f-7dae-41af-b132-4c8d78e3d8ef
+
+	measure SoHopDongHieuLuc =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			RETURN
+			    COUNTROWS(
+			        FILTER(
+			            tblHopDong,
+			            tblHopDong[NgayHieuLuc] <= DenNgay
+			                && (ISBLANK(tblHopDong[NgayHetHan]) || tblHopDong[NgayHetHan] >= DenNgay)
+			        )
+			    )
+		formatString: 0
+		lineageTag: e126886e-5c5a-49a3-a51d-f1e3ee95c8df
+
+	/// Dư nợ cuối kỳ của các khế ước thuộc hợp đồng trong ngữ cảnh, khớp theo (Công ty, Mã HĐ).
+	measure DuNoTheoHopDong =
+			
+			CALCULATE(
+			    [DuNoCuoiKy],
+			    TREATAS(
+			        SUMMARIZE(tblHopDong, tblHopDong[MaCongTy], tblHopDong[MaHDTD]),
+			        tblKheUoc[MaCongTy],
+			        tblKheUoc[MaHDTD]
+			    )
+			)
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 5b1c3d1e-7d0a-4a51-9f39-2f5f0a5c9c01
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	/// Dư nợ cuối kỳ của khế ước thuộc hợp đồng còn hiệu lực tại cuối kỳ (cùng phạm vi với TongHanMucTinDung).
+	measure DuNoTrongHanMucHieuLuc =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			VAR HopDongHieuLuc =
+			    CALCULATETABLE(
+			        SUMMARIZE(tblHopDong, tblHopDong[MaCongTy], tblHopDong[MaHDTD]),
+			        FILTER(
+			            tblHopDong,
+			            tblHopDong[NgayHieuLuc] <= DenNgay
+			                && (ISBLANK(tblHopDong[NgayHetHan]) || tblHopDong[NgayHetHan] >= DenNgay)
+			        )
+			    )
+			RETURN
+			    CALCULATE(
+			        [DuNoCuoiKy],
+			        TREATAS(HopDongHieuLuc, tblKheUoc[MaCongTy], tblKheUoc[MaHDTD])
+			    )
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 0e6f4b2a-3c8d-4e7b-8a15-6d2c1b9e7f02
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	/// Dư nợ không thuộc hợp đồng hạn mức đang hiệu lực: HĐ hết hạn, khế ước không có mã HĐ (Chailease), hoặc mã HĐ không khớp.
+	measure DuNoNgoaiHanMuc =
+			
+			[DuNoCuoiKy] - COALESCE([DuNoTrongHanMucHieuLuc], 0)
+		formatString: #,0.###############\ "₫";-#,0.###############\ "₫";#,0.###############\ "₫"
+		lineageTag: 7a9d2c4e-5b1f-4d63-9c27-8e4f3a1b6d03
+
+		annotation PBI_FormatHint = {"currencyCulture":"vi-VN"}
+
+	measure TrangThaiHopDong =
+			
+			VAR DenNgay = MAX(NgayBaoCao[Date])
+			VAR HieuLuc = MAX(tblHopDong[NgayHieuLuc])
+			VAR HetHan = MAX(tblHopDong[NgayHetHan])
+			RETURN
+			    IF(
+			        HASONEVALUE(tblHopDong[MaHDTD]) && HASONEVALUE(tblHopDong[MaCongTy]),
+			        SWITCH(
+			            TRUE(),
+			            HieuLuc > DenNgay, "Chưa hiệu lực",
+			            NOT ISBLANK(HetHan) && HetHan < DenNgay, "Hết hạn",
+			            "Đang hiệu lực"
+			        )
+			    )
+		lineageTag: 3f2e1d0c-9b8a-4765-8d43-1c2b3a4e5f04
+
+	measure TongHanMucTinDungTyDong =
+			
+			[TongHanMucTinDung]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 9c8b7a6d-5e4f-4321-a0b9-c8d7e6f5a405
+
+	measure DuNoTrongHanMucTyDong =
+			
+			[DuNoTrongHanMucHieuLuc]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 2d3c4b5a-6f7e-4890-b1a2-c3d4e5f6a706
+
+	measure HanMucConLaiTyDong =
+			
+			[HanMucConLai]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 3a4b5c6d-7e8f-4a9b-c0d1-2e3f4a5b6c79
+
+	measure DuNoNgoaiHanMucTyDong =
+			
+			[DuNoNgoaiHanMuc]
+		formatString: #,0,,,.000\ "tỷ";-#,0,,,.000\ "tỷ";0\ "tỷ"
+		lineageTag: 4b5c6d7e-8f9a-4b0c-d1e2-3f4a5b6c7d8a
+
+	column MaCongTy
+		dataType: string
+		lineageTag: 5fc9a49b-60b8-49b1-a60c-f40d0e1071e9
+		summarizeBy: none
+		sourceColumn: MaCongTy
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaHDTD
+		dataType: string
+		lineageTag: cbce867a-e326-4314-ba64-d6c24b166f21
+		summarizeBy: none
+		sourceColumn: MaHDTD
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaNganHang
+		dataType: string
+		lineageTag: 99c8918e-9d68-4665-b602-457e1b3362b2
+		summarizeBy: none
+		sourceColumn: MaNganHang
+
+		annotation SummarizationSetBy = Automatic
+
+	column NgayHieuLuc
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 2e8890ee-e2a1-4bb2-b837-1eac3c5ddc78
+		summarizeBy: none
+		sourceColumn: NgayHieuLuc
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column NgayHetHan
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 20eb748f-3cd7-4306-b369-d07b29ec69e0
+		summarizeBy: none
+		sourceColumn: NgayHetHan
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column HanMucTong
+		dataType: int64
+		formatString: #,0
+		lineageTag: d14a8980-d804-462c-930e-3c6704c93327
+		summarizeBy: sum
+		sourceColumn: HanMucTong
+
+		annotation SummarizationSetBy = Automatic
+
+	column TSDB
+		dataType: string
+		lineageTag: 4aecf074-9483-448a-bf64-e2659aa6ee53
+		summarizeBy: none
+		sourceColumn: TSDB
+
+		annotation SummarizationSetBy = Automatic
+
+	column MucDichVay
+		dataType: string
+		lineageTag: c4bf4c59-59e1-441f-99f7-ea1f34050183
+		summarizeBy: none
+		sourceColumn: MucDichVay
+
+		annotation SummarizationSetBy = Automatic
+
+	column GhiChu
+		dataType: string
+		lineageTag: de864c6d-c1bb-4e28-ba1f-deb0417d0fcc
+		summarizeBy: none
+		sourceColumn: GhiChu
+
+		annotation SummarizationSetBy = Automatic
+
+	partition tblHopDong = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\DuNo\Du_lieu_dau_vao_du_no.xlsx"), null, true),
+				    tblHopDong_Table = Source{[Item="tblHopDong",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(tblHopDong_Table,{{"MaCongTy", type text}, {"MaHDTD", type text}, {"MaNganHang", type text}, {"NgayHieuLuc", type date}, {"NgayHetHan", type date}, {"HanMucTong", Int64.Type}, {"TSDB", type text}, {"MucDichVay", type text}, {"GhiChu", type any}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

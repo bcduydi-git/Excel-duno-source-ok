@@ -1,0 +1,760 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "0d22ebf564911e4bc110",
+  "position": {
+    "x": 24,
+    "y": 484,
+    "z": 12000,
+    "height": 392,
+    "width": 1392,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "MaCongTy"
+                }
+              },
+              "queryRef": "tblKheUoc.MaCongTy",
+              "nativeQueryRef": "Cty",
+              "displayName": "Cty"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "MaNganHang"
+                }
+              },
+              "queryRef": "tblKheUoc.MaNganHang",
+              "nativeQueryRef": "NH",
+              "displayName": "NH"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "MaKheUoc"
+                }
+              },
+              "queryRef": "tblKheUoc.MaKheUoc",
+              "nativeQueryRef": "Khế ước",
+              "displayName": "Khế ước"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "NgayDaoHan"
+                }
+              },
+              "queryRef": "tblKheUoc.NgayDaoHan",
+              "nativeQueryRef": "Đáo hạn",
+              "displayName": "Đáo hạn"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "TrangThaiDoiChieu"
+                }
+              },
+              "queryRef": "tblKheUoc.TrangThaiDoiChieu",
+              "nativeQueryRef": "Trạng thái",
+              "displayName": "Trạng thái"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "q_LichTraNo"
+                    }
+                  },
+                  "Property": "GocDenHanTrongKy"
+                }
+              },
+              "queryRef": "q_LichTraNo.GocDenHanTrongKy",
+              "nativeQueryRef": "Gốc đến hạn trong kỳ",
+              "displayName": "Gốc đến hạn trong kỳ"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "q_TraNo"
+                    }
+                  },
+                  "Property": "GocDaTraTrongKy"
+                }
+              },
+              "queryRef": "q_TraNo.GocDaTraTrongKy",
+              "nativeQueryRef": "Gốc trả trong kỳ",
+              "displayName": "Gốc trả trong kỳ"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "GocChuaGhiNhan"
+                }
+              },
+              "queryRef": "tblKheUoc.GocChuaGhiNhan",
+              "nativeQueryRef": "Gốc chưa ghi nhận (luỹ kế)",
+              "displayName": "Gốc chưa ghi nhận (luỹ kế)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "GocTraTruocHan"
+                }
+              },
+              "queryRef": "tblKheUoc.GocTraTruocHan",
+              "nativeQueryRef": "Trả trước hạn (luỹ kế)",
+              "displayName": "Trả trước hạn (luỹ kế)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "NgayTraGocGanNhat"
+                }
+              },
+              "queryRef": "tblKheUoc.NgayTraGocGanNhat",
+              "nativeQueryRef": "Trả gốc gần nhất",
+              "displayName": "Trả gốc gần nhất"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "q_LichTraNo"
+                    }
+                  },
+                  "Property": "LaiPhiDenHanTrongKy"
+                }
+              },
+              "queryRef": "q_LichTraNo.LaiPhiDenHanTrongKy",
+              "nativeQueryRef": "Lãi đến hạn trong kỳ",
+              "displayName": "Lãi đến hạn trong kỳ"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "q_TraNo"
+                    }
+                  },
+                  "Property": "LaiPhiDaTraTrongKy"
+                }
+              },
+              "queryRef": "q_TraNo.LaiPhiDaTraTrongKy",
+              "nativeQueryRef": "Lãi trả trong kỳ",
+              "displayName": "Lãi trả trong kỳ"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "LaiPhiChuaGhiNhan"
+                }
+              },
+              "queryRef": "tblKheUoc.LaiPhiChuaGhiNhan",
+              "nativeQueryRef": "Lãi chưa ghi nhận (luỹ kế)",
+              "displayName": "Lãi chưa ghi nhận (luỹ kế)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "SoKyLaiDenHan"
+                }
+              },
+              "queryRef": "tblKheUoc.SoKyLaiDenHan",
+              "nativeQueryRef": "Kỳ lãi",
+              "displayName": "Kỳ lãi"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "SoGiaoDichLaiGhiNhan"
+                }
+              },
+              "queryRef": "tblKheUoc.SoGiaoDichLaiGhiNhan",
+              "nativeQueryRef": "GD lãi",
+              "displayName": "GD lãi"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tblKheUoc"
+                    }
+                  },
+                  "Property": "NgayTraLaiGanNhat"
+                }
+              },
+              "queryRef": "tblKheUoc.NgayTraLaiGanNhat",
+              "nativeQueryRef": "Trả lãi gần nhất",
+              "displayName": "Trả lãi gần nhất"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "tblKheUoc"
+                  }
+                },
+                "Property": "NgayDaoHan"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B4D'"
+                    }
+                  }
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#F1F5F9'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "gridHorizontal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "gridHorizontalColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E2E8F0'"
+                    }
+                  }
+                }
+              }
+            },
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            },
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B4D'"
+                    }
+                  }
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#F1F5F9'"
+                    }
+                  }
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B4D'"
+                    }
+                  }
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Đối chiếu theo khế ước liên quan đến kỳ (cột \"trong kỳ\" theo kỳ báo cáo; cột \"chưa ghi nhận\" luỹ kế đến cuối kỳ)'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B4D'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E2E8F0'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B4D'"
+                    }
+                  }
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Outer'"
+                }
+              }
+            },
+            "preset": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Custom'"
+                }
+              }
+            },
+            "shadowBlur": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "shadowDistance": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "shadowSpread": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "angle": {
+              "expr": {
+                "Literal": {
+                  "Value": "90D"
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "96D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "a3d47b77889785b4d10e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "tblKheUoc"
+              }
+            },
+            "Property": "KheUocLienQuanKy"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "tblKheUoc",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 1,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "f"
+                        }
+                      },
+                      "Property": "KheUocLienQuanKy"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "0L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
+  }
+}
